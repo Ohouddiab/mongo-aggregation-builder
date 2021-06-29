@@ -1,0 +1,24 @@
+{
+  "name": "mongo-aggregation-builder",
+  "description": "Mongo Aggregation Builder",
+  "version": "0.0.1",
+  "homepage": "",
+  "keywords": [],
+  "author": {
+    "name": "mohammad Khamis",
+    "email": "mohammad.khamis@repzoapp.com"
+  },
+  "contributors": [],
+  "bugs": {},
+  "directories": {},
+  "engines": {},
+  "scripts": {
+    "lint": "npx prettier --write ."
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "prettier": "2.1.2"
+  }
+}
