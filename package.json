@@ -1,7 +1,7 @@
 {
   "name": "mongo-aggregation-builder",
   "description": "Mongo Aggregation Builder",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "",
   "keywords": [],
   "author": {
@@ -15,7 +15,7 @@
   "engines": {},
   "scripts": {
     "lint": "npx prettier --write .",
-    "build":"tsc"
+    "build": "tsc"
   },
   "dependencies": {
     "lodash": "^4.17.15"
