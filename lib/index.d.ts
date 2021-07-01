@@ -22,7 +22,7 @@ interface Res {
     format: any;
     timezone?: String;
 }
-export default class aggregationBuilder {
+export declare class AggregationBuilder {
     opts: AggregationOptions;
     model: any;
     aggs: any[];

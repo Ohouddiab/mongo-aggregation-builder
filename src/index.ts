@@ -33,7 +33,7 @@ interface Res  {
   format: any
   timezone?: String}
 
-export default class aggregationBuilder {
+export  class AggregationBuilder   {
   opts: AggregationOptions = {
     allowDiskUse: true,
     serializeFunctions: true,
