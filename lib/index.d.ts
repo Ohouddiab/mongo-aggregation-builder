@@ -11,6 +11,12 @@ interface Options {
     preserveNullAndEmptyArrays: Boolean;
     unwind: Boolean;
 }
+interface Lookup {
+    from: String;
+    localField: String;
+    foreignField?: String;
+    as?: String;
+}
 interface Res {
     date: String;
     format: any;
@@ -26,7 +32,7 @@ export default class aggregationBuilder {
      * @function lookup Stage
      * @param arg object {from,localField,foreignField,as} from and localField are required.
      */
-    lookup: (arg: any, options: Options) => any;
+    lookup: (arg: Lookup, options: Options) => any;
     matchSmart: (arg: any, options: Options) => any;
     match: (arg: any, options: Options) => any;
     addFields: (filelds: any, options: Options) => any;
