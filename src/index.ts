@@ -13,14 +13,20 @@ interface Options
   unwind:Boolean
 
 }
-interface Lookup {
+interface _Lookup {
   from?: String;
   localField?: String;
   foreignField?: String;
   as?: String;
 }
+interface Lookup {
+  from: String;
+  localField: String;
+  foreignField?: String;
+  as?: String;
+}
 interface Lookupstage {
-  $lookup: Lookup;
+  $lookup: _Lookup;
 }
 interface Res  {
   date: String,
@@ -49,12 +55,12 @@ export default class aggregationBuilder {
    * @param arg object {from,localField,foreignField,as} from and localField are required.
    */
 
-  lookup = function (arg:any, options:Options) {
+  lookup = function (arg:Lookup, options:Options) {
     if (options && options.alone && this.alone(`${options.alone}_lookup`))
       return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
     let stage: Lookupstage = {
-      $lookup: {},
+      $lookup:{},
     };
     if (!arg.from)
       throw "key 'from'  is required to build lookup aggregation stage";
