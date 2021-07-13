@@ -37,7 +37,39 @@ interface Res {
   format: any;
   timezone?: String;
 }
-
+interface Facet {
+  [propName: string]: any[];
+}
+interface AddFields {
+  [propName: string]: string | any;
+}
+interface Set {
+  [propName: string]: string | any;
+}
+interface Project {
+  [propName: string]: number | string | any;
+}
+interface Match {
+  [propName: string]: any;
+}
+interface Group {
+  _id: string | {} | null;
+  [propName: string]: any;
+}
+interface Accumulator {
+  init: any;
+  initArgs?: any[];
+  accumulate: any;
+  accumulateArgs: string[];
+  merge: any;
+  finalize?: any;
+  lang: string;
+}
+interface Unwind {
+  path: string;
+  includeArrayIndex?: string;
+  preserveNullAndEmptyArrays?: boolean;
+}
 
 export class AggregationBuilder {
   opts: AggregationOptions = {
@@ -58,8 +90,8 @@ export class AggregationBuilder {
   /**
    * @function lookup Stage
    * Performs a left outer join to an unsharded collection in the same database to filter in documents from the "joined" collection for processing. To each input document, the $lookup stage adds a new array field whose elements are the matching documents from the "joined" collection. The $lookup stage passes these reshaped documents to the next stage.
-   * @type Lookup {from:string,localField:string,foreignField:string,as:string} from and localField are required.
-   * @type pipelineLookup {from:string,let:_let,pipeline:any[],as:string} from and pipeline are required.
+   * @type Lookup-arg {from:string,localField:string,foreignField:string,as:string} from and localField are required.
+   * @type pipelineLookup-arg {from:string,let:_let,pipeline:any[],as:string} from and pipeline are required.
    * @return this stage
    */
   lookup = function (arg: Lookup & pipelineLookup, options: Options) {
@@ -102,12 +134,26 @@ export class AggregationBuilder {
     return this;
   };
   /**
-   *  @function matchSmart Stage
-   * Filters the documents to pass only the documents that match the specified condition(s)
-   * @type {any} arg
+   *  @function unwind Stage
+   * Filters the documents to pass only the documents that match the specified condition(s)Deconstructs an array field from the input documents to output a document for each element. Each output document is the input document with the value of the array field replaced by the element.
+   * @type {Unwind}-arg,{path: string; includeArrayIndex?: string preserveNullAndEmptyArrays?:boolean}
    * @return this stage
    */
-  matchSmart = function (arg: any, options: Options) {
+  unwind = function (arg: Unwind, options: Options) {
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_unwind`))
+      return this;
+    this.aggs.push({ $unwind: arg });
+    this.isIf = false;
+    return this;
+  };
+  /**
+   *  @function matchSmart Stage
+   * Filters the documents to pass only the documents that match the specified condition(s)
+   * @type {Match}-arg   {[propName: string]: any}
+   * @return this stage
+   */
+  matchSmart = function (arg: Match, options: Options) {
     let stage;
     if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) {
       stage = this.aggs[this.aggs.length - 1].$match;
@@ -130,10 +176,10 @@ export class AggregationBuilder {
   /**
    * @function match Stage
    * Filters the documents to pass only the documents that match the specified condition(s)
-   * @type {*} arg
+   * @type {Match}-arg  {[propName: string]: any}
    * @return this stage
    *    */
-  match = function (arg: any, options: Options) {
+  match = function (arg: Match, options: Options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_match`))
       return this;
@@ -156,10 +202,10 @@ export class AggregationBuilder {
   /**
    * @function addFields Stage
    * Adds new fields to documents
-   * @type {*} filelds
+   * @type {AddFields}-filelds , {[propName: string]: string|any};
    * @return this stage
    */
-  addFields = function (filelds: any, options: Options) {
+  addFields = function (filelds: AddFields, options: Options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_addFields`))
       return this;
@@ -170,21 +216,21 @@ export class AggregationBuilder {
   /**
    * @function project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
-   * @type {*} projection
+   * @type {Project}-projection   {[propName: string]: Number|any}
    * @return this stage
    */
-  project = function (projection: any, options: Options) {
+  project = function (projection: Project, options: Options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_project`))
       return this;
-    this.aggs.push({ $project:  projection  });
+    this.aggs.push({ $project: projection });
     this.isIf = false;
     return this;
   };
   /**
    * @function limit Stage
    * Limits the number of documents passed to the next stage in the pipeline.
-   * @type {number} Limit
+   * @type {Number}-Limit
    * @return this stage
    */
   limit = function (limit: Number, options: Options) {
@@ -198,7 +244,7 @@ export class AggregationBuilder {
   /**
    * @function skip Stage
    *Skips over the specified number of documents that pass into the stage and passes the remaining documents to the next stage in the pipeline.
-   * @type {number} skip
+   * @type {Number}-skip
    * @return this stage
    */
   skip = function (skip: Number, options: Options) {
@@ -212,10 +258,10 @@ export class AggregationBuilder {
   /**
    * @function set Stage
    * replaces the value of a field with the specified value.
-   *  @type {*} field
+   *  @type {Set}-field {[propName: string]:string|any}
    * @return this stage
    */
-  set = function (field: any, options: Options) {
+  set = function (field: Set, options: Options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_set`))
       return this;
@@ -226,10 +272,10 @@ export class AggregationBuilder {
   /**
    * @function group Stage
    * Groups input documents by the specified _id expression and for each distinct grouping, outputs a document.The _id field of each output document contains the unique group by value.
-   *  @type {*} arg
+   *  @type {Group}-arg  {_id:null | string|any; [propName: string]: any}
    * @return this stage
    */
-  group = function (arg: any, options: Options) {
+  group = function (arg: Group, options: Options) {
     if (options && options.alone && this.alone(`${options.alone}_group`))
       return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
@@ -243,7 +289,7 @@ export class AggregationBuilder {
   /**
    * @function sort Stage
    * Sorts all input documents and returns them to the pipeline in sorted order.
-   *  @type {number} sortOrder - [1-->Sort ascending. -1-->Sort descending].
+   *  @type {number}-sortOrder  [1-->Sort ascending; -1-->Sort descending].
    * @return this stage
    */
   sort = function (sortOrder: number, options: Options) {
@@ -257,10 +303,10 @@ export class AggregationBuilder {
   /**
    * @function facet Stage
    * Processes multiple aggregation pipelines within a single stage on the same set of input documents.
-   *  @type {any} arg
+   *  @type {Facet}-arg , [propName: string]: any[]
    * @return this stage
    */
-  facet = function (arg: any, options: Options) {
+  facet = function (arg: Facet, options: Options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_facet`))
       return this;
@@ -274,7 +320,7 @@ export class AggregationBuilder {
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
-   *  @type {string[]} arr -  can be any valid expression as long as they resolve to strings.
+   *  @type {string[]}-arr  can be any valid expression as long as they resolve to strings.
    * @return This operator
    */
   concat = function (arr: []) {
@@ -573,11 +619,20 @@ export class AggregationBuilder {
   /**
    * @method concatArrays Operator
    * Concatenates arrays to return the concatenated array.
-   * @type {any[]} arr1 
-   * @type {any[]} arr2 , 
+   * @type {any[]} arr1
+   * @type {any[]} arr2 ,
    * @returns this operator
    */
   concatArrays = function (arr1: any[], arr2: any[]) {
     return { $concatArrays: [arr1, arr2] };
+  };
+  /**
+   * @method  accumulator Operator
+   * Accumulators are operators that maintain their state as documents progress through the pipeline.
+   * @type {Accumulator}-args {init:any;initArgs?: any[];accumulate:any;accumulateArgs: string[];merge: any;finalize?:any;lang: string}
+   * @returns this operator
+   */
+  accumulator = function (args: Accumulator) {
+    return { $accumulator: args };
   };
 }
