@@ -63,6 +63,16 @@ interface Unwind {
   includeArrayIndex?: string;
   preserveNullAndEmptyArrays?: boolean;
 }
+interface Reduce {
+  input: any[] | string;
+  initialValue: any;
+  in: any;
+}
+interface Filter {
+  input: any[];
+  as?: String;
+  cond: any;
+}
 export declare class AggregationBuilder {
   opts: AggregationOptions;
   model: any;
@@ -146,7 +156,7 @@ export declare class AggregationBuilder {
    *  @type {number}-sortOrder  [1-->Sort ascending; -1-->Sort descending].
    * @return this stage
    */
-  sort: (sortOrder: number, options: Options) => any;
+  sort: (sortOrder: Number, options: Options) => any;
   /**
    * @function facet Stage
    * Processes multiple aggregation pipelines within a single stage on the same set of input documents.
@@ -154,6 +164,13 @@ export declare class AggregationBuilder {
    * @return this stage
    */
   facet: (arg: Facet, options: Options) => any;
+  /**
+   * @function replaceRoot Stage
+   * Replaces the input document with the specified document.
+   *  @type {any}-newRoot
+   * @return this stage
+   */
+  replaceRoot: (newRoot: any, options: Options) => any;
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
@@ -498,6 +515,74 @@ export declare class AggregationBuilder {
     args: Accumulator
   ) => {
     $accumulator: Accumulator;
+  };
+  /**
+   * @method round Operator
+   * Rounds a number to a whole integer or to a specified decimal place.
+   * @type {String|Number}-num
+   * @type {Number}-place
+   * @returns this operator
+   */
+  round: (
+    num: String | Number,
+    place: Number
+  ) => {
+    $round: (String | Number)[];
+  };
+  /**
+   * @method pull Operator
+   * The $pull operator  removes from an existing array all instances of a value or values that match a specified condition.
+   * @type {*}-arg
+   * @returns this operator
+   */
+  pull: (
+    arg: any
+  ) => {
+    $pull: any;
+  };
+  /**
+   * @method reduce Operator
+   * Applies an expression to each element in an array and combines them into a single value.
+   * @type {Reduce }-arg  {input: any[] | string;initialValue: any; in: any}
+   * @returns this operator
+   */
+  reduce: (
+    arg: Reduce
+  ) => {
+    $reduce: Reduce;
+  };
+  /**
+   * @method filter Operator
+   * Selects a subset of an array to return based on the specified condition. Returns an array with only those elements that match the condition. The returned elements are in the original order.
+   * @type {Filter}-arg  {input: any[]; as?: String;  cond: any }
+   * @returns this operator
+   */
+  filter: (
+    arg: Filter
+  ) => {
+    $filter: Filter;
+  };
+  /**
+   * @method ifNull Operator
+   * Evaluates an expression and returns the value of the expression if the expression evaluates to a non-null value. If the expression evaluates to a null value, including instances of undefined values or missing fields, returns the value of the replacement expression.
+   * @type {any[] }-arg
+   * @returns this operator
+   */
+  ifNull: (
+    key: any[]
+  ) => {
+    $ifNull: any[];
+  };
+  /**
+   * @method  arrayElemAt Operator
+   * Returns the element at the specified array index.
+   * @type {any[] }-arg
+   * @returns this operator
+   */
+  arrayElemAt: (
+    key: any[]
+  ) => {
+    $arrayElemAt: any[];
   };
 }
 export {};

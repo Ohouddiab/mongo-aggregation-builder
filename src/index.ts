@@ -70,7 +70,16 @@ interface Unwind {
   includeArrayIndex?: string;
   preserveNullAndEmptyArrays?: boolean;
 }
-
+interface Reduce {
+  input: any[] | string;
+  initialValue: any;
+  in: any;
+}
+interface Filter {
+  input: any[];
+  as?: String;
+  cond: any;
+}
 export class AggregationBuilder {
   opts: AggregationOptions = {
     allowDiskUse: true,
@@ -292,7 +301,7 @@ export class AggregationBuilder {
    *  @type {number}-sortOrder  [1-->Sort ascending; -1-->Sort descending].
    * @return this stage
    */
-  sort = function (sortOrder: number, options: Options) {
+  sort = function (sortOrder: Number, options: Options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_sort`))
       return this;
@@ -316,7 +325,20 @@ export class AggregationBuilder {
     this.isIf = false;
     return this;
   };
-
+  /**
+   * @function replaceRoot Stage
+   * Replaces the input document with the specified document.
+   *  @type {any}-newRoot
+   * @return this stage
+   */
+  replaceRoot = function (newRoot: any, options: Options) {
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_replaceRoot `))
+      return this;
+    this.aggs.push({ $replaceRoot: newRoot });
+    this.isIf = false;
+    return this;
+  };
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
@@ -634,5 +656,60 @@ export class AggregationBuilder {
    */
   accumulator = function (args: Accumulator) {
     return { $accumulator: args };
+  };
+  /**
+   * @method round Operator
+   * Rounds a number to a whole integer or to a specified decimal place.
+   * @type {String|Number}-num
+   * @type {Number}-place
+   * @returns this operator
+   */
+  round = function (num: String | Number, place: Number) {
+    return { $round: [num, place] };
+  };
+  /**
+   * @method pull Operator
+   * The $pull operator  removes from an existing array all instances of a value or values that match a specified condition.
+   * @type {*}-arg
+   * @returns this operator
+   */
+  pull = function (arg: any) {
+    return { $pull: arg };
+  };
+  /**
+   * @method reduce Operator
+   * Applies an expression to each element in an array and combines them into a single value.
+   * @type {Reduce }-arg  {input: any[] | string;initialValue: any; in: any}
+   * @returns this operator
+   */
+  reduce = function (arg: Reduce) {
+    return { $reduce: arg };
+  };
+  /**
+   * @method filter Operator
+   * Selects a subset of an array to return based on the specified condition. Returns an array with only those elements that match the condition. The returned elements are in the original order.
+   * @type {Filter}-arg  {input: any[]; as?: String;  cond: any }
+   * @returns this operator
+   */
+  filter = function (arg: Filter) {
+    return { $filter: arg };
+  };
+  /**
+   * @method ifNull Operator
+   * Evaluates an expression and returns the value of the expression if the expression evaluates to a non-null value. If the expression evaluates to a null value, including instances of undefined values or missing fields, returns the value of the replacement expression.
+   * @type {any[] }-arg
+   * @returns this operator
+   */
+  ifNull = function (key: any[]) {
+    return { $ifNull: key };
+  };
+  /**
+   * @method  arrayElemAt Operator
+   * Returns the element at the specified array index.
+   * @type {any[] }-arg
+   * @returns this operator
+   */
+  arrayElemAt = function (key: any[]) {
+    return { $arrayElemAt: key };
   };
 }
