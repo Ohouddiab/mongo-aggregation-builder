@@ -86,70 +86,73 @@ export declare class AggregationBuilder {
    * @type pipelineLookup-arg {from:string,let:_let,pipeline:any[],as:string} from and pipeline are required.
    * @return this stage
    */
-  lookup: (arg: Lookup & pipelineLookup, options: Options) => any;
+  lookup: (
+    arg: Lookup & pipelineLookup,
+    options: Options
+  ) => AggregationBuilder;
   /**
    *  @function unwind Stage
    * Filters the documents to pass only the documents that match the specified condition(s)Deconstructs an array field from the input documents to output a document for each element. Each output document is the input document with the value of the array field replaced by the element.
    * @type {Unwind}-arg,{path: string; includeArrayIndex?: string preserveNullAndEmptyArrays?:boolean}
    * @return this stage
    */
-  unwind: (arg: Unwind, options: Options) => any;
+  unwind: (arg: Unwind, options: Options) => AggregationBuilder;
   /**
    *  @function matchSmart Stage
    * Filters the documents to pass only the documents that match the specified condition(s)
    * @type {Match}-arg   {[propName: string]: any}
    * @return this stage
    */
-  matchSmart: (arg: Match, options: Options) => any;
+  matchSmart: (arg: Match, options: Options) => AggregationBuilder;
   /**
    * @function match Stage
    * Filters the documents to pass only the documents that match the specified condition(s)
    * @type {Match}-arg  {[propName: string]: any}
    * @return this stage
    *    */
-  match: (arg: Match, options: Options) => any;
+  match: (arg: Match, options: Options) => AggregationBuilder;
   /**
    * @function addFields Stage
    * Adds new fields to documents
    * @type {AddFields}-filelds , {[propName: string]: string|any};
    * @return this stage
    */
-  addFields: (filelds: AddFields, options: Options) => any;
+  addFields: (filelds: AddFields, options: Options) => AggregationBuilder;
   /**
    * @function project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
    * @type {Project}-projection   {[propName: string]: Number|any}
    * @return this stage
    */
-  project: (projection: Project, options: Options) => any;
+  project: (projection: Project, options: Options) => AggregationBuilder;
   /**
    * @function limit Stage
    * Limits the number of documents passed to the next stage in the pipeline.
    * @type {Number}-Limit
    * @return this stage
    */
-  limit: (limit: Number, options: Options) => any;
+  limit: (limit: Number, options: Options) => AggregationBuilder;
   /**
    * @function skip Stage
    *Skips over the specified number of documents that pass into the stage and passes the remaining documents to the next stage in the pipeline.
    * @type {Number}-skip
    * @return this stage
    */
-  skip: (skip: Number, options: Options) => any;
+  skip: (skip: Number, options: Options) => AggregationBuilder;
   /**
    * @function set Stage
    * replaces the value of a field with the specified value.
    *  @type {Set}-field {[propName: string]:string|any}
    * @return this stage
    */
-  set: (field: Set, options: Options) => any;
+  set: (field: Set, options: Options) => AggregationBuilder;
   /**
    * @function group Stage
    * Groups input documents by the specified _id expression and for each distinct grouping, outputs a document.The _id field of each output document contains the unique group by value.
    *  @type {Group}-arg  {_id:null | string|any; [propName: string]: any}
    * @return this stage
    */
-  group: (arg: Group, options: Options) => any;
+  group: (arg: Group, options: Options) => AggregationBuilder;
   /**
    * @function sort Stage
    * Sorts all input documents and returns them to the pipeline in sorted order.
@@ -177,9 +180,7 @@ export declare class AggregationBuilder {
    *  @type {string[]}-arr  can be any valid expression as long as they resolve to strings.
    * @return This operator
    */
-  concat: (
-    arr: []
-  ) => {
+  concat: (arr: []) => {
     $concat: [];
   };
   /**
@@ -256,9 +257,7 @@ export declare class AggregationBuilder {
    * @type {string} arg - string of length 24.
    * @return this Operator
    */
-  toObjectId: (
-    arg: String
-  ) => {
+  toObjectId: (arg: String) => {
     $toObjectId: String;
   };
   /**
@@ -333,9 +332,7 @@ export declare class AggregationBuilder {
    * @return this Operator
    *
    */
-  isArray: (
-    arg: any
-  ) => {
+  isArray: (arg: any) => {
     $isArray: any;
   };
   /**
@@ -354,7 +351,7 @@ export declare class AggregationBuilder {
   alone: (key: any) => boolean;
   only: (key: String) => boolean;
   isIf: Boolean;
-  if: (condition: any, options: Options) => void;
+  if: (condition: any, options: Options) => AggregationBuilder;
   /**
    * @method addToSet Operator
    * Returns an array of all unique values that results from applying an expression to each document in a group of documents that share the same group by key
@@ -362,9 +359,7 @@ export declare class AggregationBuilder {
    * @type {*} key
    * @returns this operator
    */
-  addToSet: (
-    key: any
-  ) => {
+  addToSet: (key: any) => {
     $addToSet: any;
   };
   /**
@@ -373,9 +368,7 @@ export declare class AggregationBuilder {
    * @type {*} key
    * @returns this operator
    */
-  avg: (
-    key: any
-  ) => {
+  avg: (key: any) => {
     $avg: any;
   };
   /**
@@ -384,9 +377,7 @@ export declare class AggregationBuilder {
    * @type {string} key
    * @returns this operator
    */
-  first: (
-    key: string
-  ) => {
+  first: (key: string) => {
     $first: string;
   };
   /**
@@ -395,9 +386,7 @@ export declare class AggregationBuilder {
    * @type {string} key
    * @returns this operator
    */
-  last: (
-    key: string
-  ) => {
+  last: (key: string) => {
     $last: string;
   };
   /**
@@ -406,9 +395,7 @@ export declare class AggregationBuilder {
    * @type {string} key
    * @returns this operator
    */
-  max: (
-    key: string
-  ) => {
+  max: (key: string) => {
     $max: string;
   };
   /**
@@ -417,9 +404,7 @@ export declare class AggregationBuilder {
    * @type {string} key
    * @returns this operator
    */
-  min: (
-    key: string
-  ) => {
+  min: (key: string) => {
     $min: string;
   };
   /**
@@ -429,9 +414,7 @@ export declare class AggregationBuilder {
    * @type {*} data
    * @returns this operator
    */
-  push: (
-    data: any
-  ) => {
+  push: (data: any) => {
     $push: any;
   };
   /**
@@ -440,9 +423,7 @@ export declare class AggregationBuilder {
    * @type {string|1| any[]} data
    * @returns this operator
    */
-  sum: (
-    data: string | 1 | any[]
-  ) => {
+  sum: (data: string | 1 | any[]) => {
     $sum: string | any[] | 1;
   };
   /**
@@ -464,9 +445,7 @@ export declare class AggregationBuilder {
    * @type {any[]} key
    * @returns this operator
    */
-  in: (
-    key: any[]
-  ) => {
+  in: (key: any[]) => {
     $in: any[];
   };
   /**
@@ -476,9 +455,7 @@ export declare class AggregationBuilder {
    *y
    * @returns this operator
    */
-  size: (
-    key: string
-  ) => {
+  size: (key: string) => {
     $size: string;
   };
   /**
@@ -487,9 +464,7 @@ export declare class AggregationBuilder {
    * @type {string|any[]} key
    * @returns this operator
    */
-  mergeObjects: (
-    key: string | any[]
-  ) => {
+  mergeObjects: (key: string | any[]) => {
     $mergeObjects: string | any[];
   };
   /**
@@ -511,9 +486,7 @@ export declare class AggregationBuilder {
    * @type {Accumulator}-args {init:any;initArgs?: any[];accumulate:any;accumulateArgs: string[];merge: any;finalize?:any;lang: string}
    * @returns this operator
    */
-  accumulator: (
-    args: Accumulator
-  ) => {
+  accumulator: (args: Accumulator) => {
     $accumulator: Accumulator;
   };
   /**
@@ -535,9 +508,7 @@ export declare class AggregationBuilder {
    * @type {*}-arg
    * @returns this operator
    */
-  pull: (
-    arg: any
-  ) => {
+  pull: (arg: any) => {
     $pull: any;
   };
   /**
@@ -546,9 +517,7 @@ export declare class AggregationBuilder {
    * @type {Reduce }-arg  {input: any[] | string;initialValue: any; in: any}
    * @returns this operator
    */
-  reduce: (
-    arg: Reduce
-  ) => {
+  reduce: (arg: Reduce) => {
     $reduce: Reduce;
   };
   /**
@@ -557,9 +526,7 @@ export declare class AggregationBuilder {
    * @type {Filter}-arg  {input: any[]; as?: String;  cond: any }
    * @returns this operator
    */
-  filter: (
-    arg: Filter
-  ) => {
+  filter: (arg: Filter) => {
     $filter: Filter;
   };
   /**
@@ -568,9 +535,7 @@ export declare class AggregationBuilder {
    * @type {any[] }-arg
    * @returns this operator
    */
-  ifNull: (
-    key: any[]
-  ) => {
+  ifNull: (key: any[]) => {
     $ifNull: any[];
   };
   /**
@@ -579,9 +544,7 @@ export declare class AggregationBuilder {
    * @type {any[] }-arg
    * @returns this operator
    */
-  arrayElemAt: (
-    key: any[]
-  ) => {
+  arrayElemAt: (key: any[]) => {
     $arrayElemAt: any[];
   };
 }

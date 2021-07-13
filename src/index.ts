@@ -2,6 +2,7 @@ interface AggregationOptions {
   allowDiskUse: Boolean;
   serializeFunctions: Boolean;
 }
+
 interface Options {
   and: Boolean;
   or: Boolean;
@@ -80,6 +81,7 @@ interface Filter {
   as?: String;
   cond: any;
 }
+
 export class AggregationBuilder {
   opts: AggregationOptions = {
     allowDiskUse: true,
@@ -103,7 +105,10 @@ export class AggregationBuilder {
    * @type pipelineLookup-arg {from:string,let:_let,pipeline:any[],as:string} from and pipeline are required.
    * @return this stage
    */
-  lookup = function (arg: Lookup & pipelineLookup, options: Options) {
+  lookup: (
+    arg: Lookup & pipelineLookup,
+    options: Options
+  ) => AggregationBuilder = function (arg, options) {
     if (options && options.alone && this.alone(`${options.alone}_lookup`))
       return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
@@ -148,7 +153,10 @@ export class AggregationBuilder {
    * @type {Unwind}-arg,{path: string; includeArrayIndex?: string preserveNullAndEmptyArrays?:boolean}
    * @return this stage
    */
-  unwind = function (arg: Unwind, options: Options) {
+  unwind: (arg: Unwind, options: Options) => AggregationBuilder = function (
+    arg,
+    options
+  ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_unwind`))
       return this;
@@ -162,7 +170,10 @@ export class AggregationBuilder {
    * @type {Match}-arg   {[propName: string]: any}
    * @return this stage
    */
-  matchSmart = function (arg: Match, options: Options) {
+  matchSmart: (arg: Match, options: Options) => AggregationBuilder = function (
+    arg: Match,
+    options: Options
+  ) {
     let stage;
     if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) {
       stage = this.aggs[this.aggs.length - 1].$match;
@@ -188,7 +199,10 @@ export class AggregationBuilder {
    * @type {Match}-arg  {[propName: string]: any}
    * @return this stage
    *    */
-  match = function (arg: Match, options: Options) {
+  match: (arg: Match, options: Options) => AggregationBuilder = function (
+    arg: Match,
+    options: Options
+  ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_match`))
       return this;
@@ -214,35 +228,40 @@ export class AggregationBuilder {
    * @type {AddFields}-filelds , {[propName: string]: string|any};
    * @return this stage
    */
-  addFields = function (filelds: AddFields, options: Options) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_addFields`))
+  addFields: (filelds: AddFields, options: Options) => AggregationBuilder =
+    function (filelds, options) {
+      if (options && options.only && this.only(`${options.only}`)) return this;
+      if (options && options.alone && this.alone(`${options.alone}_addFields`))
+        return this;
+      this.aggs.push({ $addFields: filelds });
+      this.isIf = false;
       return this;
-    this.aggs.push({ $addFields: filelds });
-    this.isIf = false;
-    return this;
-  };
+    };
   /**
    * @function project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
    * @type {Project}-projection   {[propName: string]: Number|any}
    * @return this stage
    */
-  project = function (projection: Project, options: Options) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_project`))
+  project: (projection: Project, options: Options) => AggregationBuilder =
+    function (projection, options) {
+      if (options && options.only && this.only(`${options.only}`)) return this;
+      if (options && options.alone && this.alone(`${options.alone}_project`))
+        return this;
+      this.aggs.push({ $project: projection });
+      this.isIf = false;
       return this;
-    this.aggs.push({ $project: projection });
-    this.isIf = false;
-    return this;
-  };
+    };
   /**
    * @function limit Stage
    * Limits the number of documents passed to the next stage in the pipeline.
    * @type {Number}-Limit
    * @return this stage
    */
-  limit = function (limit: Number, options: Options) {
+  limit: (limit: Number, options: Options) => AggregationBuilder = function (
+    limit,
+    options
+  ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_limit`))
       return this;
@@ -256,7 +275,10 @@ export class AggregationBuilder {
    * @type {Number}-skip
    * @return this stage
    */
-  skip = function (skip: Number, options: Options) {
+  skip: (skip: Number, options: Options) => AggregationBuilder = function (
+    skip: Number,
+    options: Options
+  ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_skip`))
       return this;
@@ -270,7 +292,10 @@ export class AggregationBuilder {
    *  @type {Set}-field {[propName: string]:string|any}
    * @return this stage
    */
-  set = function (field: Set, options: Options) {
+  set: (field: Set, options: Options) => AggregationBuilder = function (
+    field,
+    options
+  ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_set`))
       return this;
@@ -284,7 +309,10 @@ export class AggregationBuilder {
    *  @type {Group}-arg  {_id:null | string|any; [propName: string]: any}
    * @return this stage
    */
-  group = function (arg: Group, options: Options) {
+  group: (arg: Group, options: Options) => AggregationBuilder = function (
+    arg,
+    options
+  ) {
     if (options && options.alone && this.alone(`${options.alone}_group`))
       return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
@@ -516,8 +544,13 @@ export class AggregationBuilder {
     return Object.values(this.alones).includes(key) ? false : true;
   };
   isIf: Boolean = false;
-  if = function (condition: any, options: Options) {
+  if: (condition: any, options: Options) => AggregationBuilder = function (
+    condition,
+    options
+  ) {
+    // if  = function (condition: any, options: Options) {
     if (condition) this.isIf = true;
+    return this;
   };
   /**
    * @method addToSet Operator
