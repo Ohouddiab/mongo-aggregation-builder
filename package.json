@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.14.7",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.21"
   },
   "repository": {
     "type": "git",
