@@ -19,7 +19,7 @@ declare type _let = string;
  * @type {String}  from - "required", collection to join,
  * @type {String}  localField -  field from the input documents,
  * @type {String}  foreignField - "required", field from the documents of the "from" collection,
- * @type {_let} let - Optional,
+ * @type {_let} let - Optional. Specifies the variables to use in the pipeline stages.
  * @see _let
  * @type {any} pipeline - [ pipeline to run on joined collection ],
  * @type {String}  as - output array field.
@@ -153,7 +153,7 @@ export declare class AggregationBuilder {
      * Performs a left outer join to an unsharded collection in the same database to filter in documents from the "joined" collection for processing.
      * To each input document, the $lookup stage adds a new array field whose elements are the matching documents from the "joined" collection. The $lookup stage passes these reshaped documents to the next stage.
      * @type {Lookup } - arg
-     * @type {string} Lookup.from- collection to join.
+     * @type {string} Lookup.from - collection to join.
      * @type {String} Lookup.localField - Optional. field from the input documents.
      * @type {String} Lookup.foreignField - Optional. field from the documents of the "from" collection,
      * @type {_let} Lookup.let - Optional. Specifies variables to use in the pipeline stages
@@ -170,7 +170,6 @@ export declare class AggregationBuilder {
      * @type {string} includeArrayIndex - Optional. The name of a new field to hold the array index of the element;
      * @type {boolean} preserveNullAndEmptyArrays- Optional. If true, if the path is null, missing, or an empty array, $unwind outputs the document.
     If false, if path is null, missing, or an empty array, $unwind does not output a document. The default value is false.;
-     * @see Unwind
      * @return this stage
      */
     unwind: (arg: Unwind, options: Options) => AggregationBuilder;
@@ -243,8 +242,7 @@ export declare class AggregationBuilder {
     /**
      * @method facet Stage
      * Processes multiple aggregation pipelines within a single stage on the same set of input documents.
-     * @type {{[propName: string]: any[]}} - arg
-     * @see Facet
+     * @type {[propName: string]: any[]} - arg
      * @return this stage
      */
     facet: (arg: Facet, options: Options) => AggregationBuilder;
@@ -293,6 +291,18 @@ export declare class AggregationBuilder {
      */
     eq: (arg1: any, arg2: any) => {
         $eq: any[];
+    };
+    /**
+     * Compares two values and returns:
+     * true when the values are not equivalent.
+     * false when the values are equivalent.
+     * @method  ne Operator
+     *  @type {*} arg1 -expression1
+     *  @type {*} arg2 -expression2
+     * @return this operator
+     */
+    ne: (arg1: any, arg2: any) => {
+        $ne: any[];
     };
     /**
      * Converts a date object to a string according to a user-specified format.
@@ -600,11 +610,76 @@ export declare class AggregationBuilder {
     /**
      * @method  arrayElemAt Operator
      * Returns the element at the specified array index.
-     * @type {any[] }-arg
+     * @type {any[] } - arg
      * @returns this operator
      */
     arrayElemAt: (key: any[]) => {
         $arrayElemAt: any[];
+    };
+    /**
+     * @method  or Operator
+     * The $or operator performs a logical OR operation on an array of two or more <expressions>
+     * and selects the documents that satisfy at least one of the <expressions>.
+     * @type {any} - arg
+     * @returns this operator
+     */
+    or: (arg: any) => {
+        $or: any;
+    };
+    /**
+     * @method  and Operator
+     * $and performs a logical AND operation on an array of one or more expressions
+     * and selects the documents that satisfy all the expressions in the array.
+     * @type {any} - arg
+     * @returns this operator
+     */
+    and: (arg: any) => {
+        $and: any;
+    };
+    /**
+     * @method  gt Operator
+     * $and performs a logical AND operation on an array of one or more expressions
+     * and selects the documents that satisfy all the expressions in the array.
+     * @type {any} - arr1
+     * @type {any} - arr2
+     * @returns this operator
+     */
+    gt: (arg1: any, arg2: any) => {
+        $gt: any[];
+    };
+    /**
+     * @method  gte Operator
+     * selects those documents where the value of the field is greater than the specified value.
+     * @type {any } - arr1
+     * @type {any} - arr2
+     * @returns this operator
+     */
+    gte: (arg1: any, arg2: any) => {
+        $gte: any[];
+    };
+    /**
+     * @method  lt Operator
+     * Compares two values and returns:
+     * true when the first value is less than the second value.
+     * false when the first value is greater than or equivalent to the second value.
+     * @type {any } - arr1
+     * @type {any} - arr2
+     * @returns this operator
+     */
+    lt: (arg1: any, arg2: any) => {
+        $lt: any[];
+    };
+    /**
+     * @method  lte Operator
+     * Compares two values and returns:
+     * true when the first value is less than or equivalent to the second value.
+     * false when the first value is greater than the second value.
+     * @type {any } - arr1
+     * @type {any} - arr2
+     * @returns this operator
+     */
+    lte: (arg1: any, arg2: any) => {
+        $lte: any[];
     };
 }
 export {};
