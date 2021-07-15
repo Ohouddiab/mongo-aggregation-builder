@@ -1,5 +1,16 @@
 interface AggregationOptions {
+  /**
+   * allowDiskUse() allows MongoDB to use temporary files on disk to store data exceeding the 100 megabyte
+   * system memory limit while processing a blocking sort operation. If MongoDB requires using more than 100
+   * megabytes of system memory for the blocking sort operation, MongoDB returns an error unless the query
+   * specifies cursor.allowDiskUse().
+   * @type {Boolean} allowDiskUse
+   */
   allowDiskUse: Boolean;
+  /**
+   * Specifies whether to serialize functions on any object passed to the server
+   * @type {Boolean} serializeFunctions
+   */
   serializeFunctions: Boolean;
 }
 
@@ -12,73 +23,195 @@ interface Options {
   preserveNullAndEmptyArrays: Boolean;
   unwind: Boolean;
 }
-/** @param _let: { <var_1>: <$expression>, …, <var_n>: <$expression> },  */
-type _let = string;
-
-type Lookup = {
+interface Lookup {
+  /**
+   * @type  {String}  from - "required", collection to join,
+   */
   from: String;
+  /**
+   * @type  {String}  localField - field from the input documents,
+   */
   localField?: String;
+  /**
+   * @type  {String}  foreignField - field from the documents of the "from" collection,
+   */
   foreignField?: String;
-  as?: String;
-};
+  /**
+   * @type  {any} let - Optional. Specifies the variables to use in the pipeline stages.
+   * @example { <var_1>: <$expression>, …, <var_n>: <$expression> },  */
 
-type pipelineLookup = {
-  from: String;
-  let?: _let;
+  let?: any;
+  /**
+   * @type  {any} pipeline - [ pipeline to run on joined collection ],
+   */
   pipeline?: any[];
+  /**
+   * @type  {String}  as - Optional. output array field.
+   */
   as?: String;
-};
-
-type _lookup = Lookup & pipelineLookup;
+}
 interface Lookupstage {
   $lookup: Lookup;
 }
 interface Res {
+  /**
+   *  @type {string} date -The date to convert to string.must be a valid expression that resolves to a Date, a Timestamp, or an ObjectID.
+   */
   date: String;
+  /**
+   *  @type {*} format -Optional- The date format specification
+   */
   format: any;
+  /**
+   *  @type {string} timezone -Optional- The timezone of the operation result   */
+
   timezone?: String;
 }
+
 interface Facet {
+  /**
+* @example   
+*  {
+    <outputField1>: [ <stage1>, <stage2>, ... ],
+    <outputField2>: [ <stage1>, <stage2>, ... ],
+    ...
+ }
+*/
   [propName: string]: any[];
 }
+
 interface AddFields {
+  /**
+   * @example
+   * { <newField>: <expression>, ... }
+   */
   [propName: string]: string | any;
 }
+
 interface Set {
+  /**
+   * @example
+   * { <field1>: <value1>, ... }
+   */
   [propName: string]: string | any;
 }
+
 interface Project {
+  /**
+   * @example
+   *  {"<field1>": 0, "<field2>": 0, ... }
+   */
   [propName: string]: number | string | any;
 }
+
 interface Match {
+  /**
+   * @example
+   * { $expr: { <aggregation expression> } }
+   */
   [propName: string]: any;
 }
+
 interface Group {
-  _id: string | {} | null;
+  /**
+* @type {string|null|any} _id
+* @example
+*   {
+    _id: <expression>, // Group By Expression
+    <field1>: { <accumulator1> : <expression1> },
+    ...
+  }
+*/
+  _id: string | null | any;
   [propName: string]: any;
 }
+
 interface Accumulator {
+  /**
+   * @type  {any} init - Function used to initialize the state.
+   * @example
+   * function (<initArg1>, <initArg2>, ...) {
+   *...
+   * return <initialState>}
+   */
   init: any;
+  /**
+   * @type {any[]} initArgs - Optional. Arguments passed to the init function.
+   */
   initArgs?: any[];
+  /**
+   * @type {any}  accumulate - Function used to accumulate documents.
+   * @example
+   *  function(state, <accumArg1>, <accumArg2>, ...) {
+   * ...
+ * return <newState>
+}
+   */
   accumulate: any;
+  /**
+   * @type {any}  accumulateArgs - Arguments passed to the accumulate function
+   */
   accumulateArgs: string[];
-  merge: any;
-  finalize?: any;
+  /**
+   * @type {Strng |any}  merge - Function used to merge two internal states.
+   */
+  merge: string | any;
+  /**
+   * @type {String | any} finalize - Optional. Function used to update the result of the accumulation.
+   */
+  finalize?: string | any;
+  /**
+   * @type {String} lang - The language used in the $accumulator code.
+   */
   lang: string;
 }
+
 interface Unwind {
+  /**
+   * @type {string} path - field path;
+   */
   path: string;
+  /**
+   * @type {string} includeArrayIndex - Optional.
+   * The name of a new field to hold the array index of the element.;
+   */
   includeArrayIndex?: string;
+  /**
+   * @type {boolean} preserveNullAndEmptyArrays- Optional.
+   * If true, if the path is null, missing, or an empty array, $unwind outputs the document.
+   * If false, if path is null, missing, or an empty array, $unwind does not output a document.
+   * The default value is false.;
+   */
   preserveNullAndEmptyArrays?: boolean;
 }
+
 interface Reduce {
+  /**
+   * @type {any[]|string} input - Can be any valid expression that resolves to an array.
+   */
   input: any[] | string;
+  /**
+   * @type {any} initialValue - The initial cumulative value set before in is applied to the first element of the input array.
+   */
   initialValue: any;
+  /**
+   * @type {any} in - A valid expression that $reduce applies to each element in the input array in left-to-right order.
+   */
   in: any;
 }
+
 interface Filter {
+  /**
+   * @type {any[]} input - An expression that resolves to an array.
+   */
   input: any[];
+  /**
+   * @type {string} as - Optional. A name for the variable that represents each individual element of the input array
+   */
   as?: String;
+  /**
+   * @type {any} cond - An expression that resolves to a boolean value used to determine if an element should be included in the output array.
+   */
   cond: any;
 }
 
@@ -99,21 +232,30 @@ export class AggregationBuilder {
   }
   //console.log("this model", this.model);
   /**
-   * @function lookup Stage
-   * Performs a left outer join to an unsharded collection in the same database to filter in documents from the "joined" collection for processing. To each input document, the $lookup stage adds a new array field whose elements are the matching documents from the "joined" collection. The $lookup stage passes these reshaped documents to the next stage.
-   * @type Lookup-arg {from:string,localField:string,foreignField:string,as:string} from and localField are required.
-   * @type pipelineLookup-arg {from:string,let:_let,pipeline:any[],as:string} from and pipeline are required.
+   * @method lookup Stage
+   * Performs a left outer join to an unsharded collection in the same database to filter in documents from the "joined" collection for processing.
+   * To each input document, the $lookup stage adds a new array field whose elements are the matching documents from the "joined" collection. The $lookup stage passes these reshaped documents to the next stage.
+   * @type {Lookup } - arg
+   * @type {string} Lookup.from - collection to join.
+   * @type {String} Lookup.localField - Optional. field from the input documents.
+   * @type {String} Lookup.foreignField - Optional. field from the documents of the "from" collection,
+   * @type {_let} Lookup.let - Optional. Specifies variables to use in the pipeline stages
+   * @type {any} Lookup.pipeline - Optional. [ pipeline to run on joined collection ],
+   * @type {String} Lookup.as - Optional. output array field
    * @return this stage
    */
-  lookup: (
-    arg: Lookup & pipelineLookup,
-    options: Options
-  ) => AggregationBuilder = function (arg, options) {
+  lookup: (arg: Lookup, options: Options) => AggregationBuilder = function (
+    arg,
+    options
+  ) {
     if (options && options.alone && this.alone(`${options.alone}_lookup`))
       return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
     let stage: any;
     if (arg && arg.pipeline) {
+      /**
+       * @see pipelineLookup
+       */
       stage = { $lookup: {} };
       if (!arg.pipeline)
         throw "key 'pipeline'  is required to build lookup aggregation stage";
@@ -125,6 +267,9 @@ export class AggregationBuilder {
       stage.$lookup.as = arg.as || arg.as;
       this.aggs.push(stage);
     } else if (arg && arg.localField) {
+      /**
+       * @see Lookup
+       */
       stage = { $lookup: {} };
       if (arg && !arg.from)
         throw "key 'from'  is required to build lookup aggregation stage";
@@ -137,6 +282,9 @@ export class AggregationBuilder {
       this.aggs.push(stage);
     }
     if (options && options.unwind)
+      /**
+       * @see unwind
+       */
       this.aggs.push({
         $unwind: {
           path: `$${stage.$lookup.as}`,
@@ -148,9 +296,13 @@ export class AggregationBuilder {
     return this;
   };
   /**
-   *  @function unwind Stage
+   *  @method unwind Stage
    * Filters the documents to pass only the documents that match the specified condition(s)Deconstructs an array field from the input documents to output a document for each element. Each output document is the input document with the value of the array field replaced by the element.
-   * @type {Unwind}-arg,{path: string; includeArrayIndex?: string preserveNullAndEmptyArrays?:boolean}
+   * @type {Unwind} - arg,
+   * @type  {string} path - field path;
+   * @type {string} includeArrayIndex - Optional. The name of a new field to hold the array index of the element;
+   * @type {boolean} preserveNullAndEmptyArrays- Optional. If true, if the path is null, missing, or an empty array, $unwind outputs the document. 
+  If false, if path is null, missing, or an empty array, $unwind does not output a document. The default value is false.;
    * @return this stage
    */
   unwind: (arg: Unwind, options: Options) => AggregationBuilder = function (
@@ -160,14 +312,17 @@ export class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_unwind`))
       return this;
+    /**
+     * @see Unwind
+     */
     this.aggs.push({ $unwind: arg });
     this.isIf = false;
     return this;
   };
   /**
-   *  @function matchSmart Stage
+   *  @method matchSmart Stage
    * Filters the documents to pass only the documents that match the specified condition(s)
-   * @type {Match}-arg   {[propName: string]: any}
+   * @type {[propName: string]: any} - arg
    * @return this stage
    */
   matchSmart: (arg: Match, options: Options) => AggregationBuilder = function (
@@ -175,6 +330,9 @@ export class AggregationBuilder {
     options: Options
   ) {
     let stage;
+    /**
+     * @see Match
+     */
     if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) {
       stage = this.aggs[this.aggs.length - 1].$match;
     } else {
@@ -194,9 +352,9 @@ export class AggregationBuilder {
     return this;
   };
   /**
-   * @function match Stage
+   * @method match Stage
    * Filters the documents to pass only the documents that match the specified condition(s)
-   * @type {Match}-arg  {[propName: string]: any}
+   * @type {[propName: string]: any} - arg
    * @return this stage
    *    */
   match: (arg: Match, options: Options) => AggregationBuilder = function (
@@ -210,6 +368,9 @@ export class AggregationBuilder {
     if (options && (options.smart || options.or || options.and))
       return this.matchSmart(arg, options);
     let stage;
+    /**
+     * @see Match
+     */
     if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) {
       stage = this.aggs[this.aggs.length - 1].$match;
     } else {
@@ -223,9 +384,9 @@ export class AggregationBuilder {
     return this;
   };
   /**
-   * @function addFields Stage
+   * @method addFields Stage
    * Adds new fields to documents
-   * @type {AddFields}-filelds , {[propName: string]: string|any};
+   * @type {[propName: string]: string | any} - filelds ,
    * @return this stage
    */
   addFields: (filelds: AddFields, options: Options) => AggregationBuilder =
@@ -233,14 +394,18 @@ export class AggregationBuilder {
       if (options && options.only && this.only(`${options.only}`)) return this;
       if (options && options.alone && this.alone(`${options.alone}_addFields`))
         return this;
+      /**
+ * @see AddFields
+ 
+ */
       this.aggs.push({ $addFields: filelds });
       this.isIf = false;
       return this;
     };
   /**
-   * @function project Stage
+   * @method project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
-   * @type {Project}-projection   {[propName: string]: Number|any}
+   * @type {[propName: string]: number | string | any} - projection
    * @return this stage
    */
   project: (projection: Project, options: Options) => AggregationBuilder =
@@ -248,14 +413,17 @@ export class AggregationBuilder {
       if (options && options.only && this.only(`${options.only}`)) return this;
       if (options && options.alone && this.alone(`${options.alone}_project`))
         return this;
+      /**
+       * @see Project
+       */
       this.aggs.push({ $project: projection });
       this.isIf = false;
       return this;
     };
   /**
-   * @function limit Stage
+   * @method limit Stage
    * Limits the number of documents passed to the next stage in the pipeline.
-   * @type {Number}-Limit
+   * @type {Number} - Limit
    * @return this stage
    */
   limit: (limit: Number, options: Options) => AggregationBuilder = function (
@@ -270,9 +438,9 @@ export class AggregationBuilder {
     return this;
   };
   /**
-   * @function skip Stage
+   * @method skip Stage
    *Skips over the specified number of documents that pass into the stage and passes the remaining documents to the next stage in the pipeline.
-   * @type {Number}-skip
+   * @type {Number} - skip
    * @return this stage
    */
   skip: (skip: Number, options: Options) => AggregationBuilder = function (
@@ -287,9 +455,9 @@ export class AggregationBuilder {
     return this;
   };
   /**
-   * @function set Stage
+   * @method set Stage
    * replaces the value of a field with the specified value.
-   *  @type {Set}-field {[propName: string]:string|any}
+   *  @type {[propName: string]: string | any} - field
    * @return this stage
    */
   set: (field: Set, options: Options) => AggregationBuilder = function (
@@ -299,14 +467,20 @@ export class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_set`))
       return this;
+    /**
+     * @see Set
+     */
+
     this.aggs.push({ $set: field });
     this.isIf = false;
     return this;
   };
   /**
-   * @function group Stage
+   * @method group Stage
    * Groups input documents by the specified _id expression and for each distinct grouping, outputs a document.The _id field of each output document contains the unique group by value.
-   *  @type {Group}-arg  {_id:null | string|any; [propName: string]: any}
+   * @type {Group} - arg
+   * @type { _id: string | null | any} - Group._id;
+   * @type {[propName: string]: any} - Group.propName
    * @return this stage
    */
   group: (arg: Group, options: Options) => AggregationBuilder = function (
@@ -317,6 +491,10 @@ export class AggregationBuilder {
       return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
     let stage: any;
+    /**
+     * @see Group
+     *
+     */
     stage = { $group: arg };
     stage.$group._id = arg._id;
     this.aggs.push(stage);
@@ -324,12 +502,16 @@ export class AggregationBuilder {
     return this;
   };
   /**
-   * @function sort Stage
+   * @method sort Stage
    * Sorts all input documents and returns them to the pipeline in sorted order.
-   *  @type {number}-sortOrder  [1-->Sort ascending; -1-->Sort descending].
+   *  @type {Number} - sortOrder
+   * [1-->Sort ascending; -1-->Sort descending].
    * @return this stage
    */
-  sort = function (sortOrder: Number, options: Options) {
+  sort: (sortOrder: Number, options: Options) => AggregationBuilder = function (
+    sortOrder,
+    options
+  ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_sort`))
       return this;
@@ -338,39 +520,51 @@ export class AggregationBuilder {
     return this;
   };
   /**
-   * @function facet Stage
+   * @method facet Stage
    * Processes multiple aggregation pipelines within a single stage on the same set of input documents.
-   *  @type {Facet}-arg , [propName: string]: any[]
+   * @type {[propName: string]: any[]} - arg
    * @return this stage
    */
-  facet = function (arg: Facet, options: Options) {
+  facet: (arg: Facet, options: Options) => AggregationBuilder = function (
+    arg,
+    options
+  ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_facet`))
       return this;
     let stage: any;
+    /**
+     * @see Facet
+     */
     stage = { $facet: arg };
     this.aggs.push(stage);
     this.isIf = false;
     return this;
   };
   /**
-   * @function replaceRoot Stage
+   * @method replaceRoot Stage
    * Replaces the input document with the specified document.
-   *  @type {any}-newRoot
+   *  @type {Any} - newRoot
    * @return this stage
    */
-  replaceRoot = function (newRoot: any, options: Options) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_replaceRoot `))
+  replaceRoot: (newRoot: any, options: Options) => AggregationBuilder =
+    function (newRoot, options) {
+      if (options && options.only && this.only(`${options.only}`)) return this;
+      if (
+        options &&
+        options.alone &&
+        this.alone(`${options.alone}_replaceRoot `)
+      )
+        return this;
+      this.aggs.push({ $replaceRoot: newRoot });
+      this.isIf = false;
       return this;
-    this.aggs.push({ $replaceRoot: newRoot });
-    this.isIf = false;
-    return this;
-  };
+    };
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
-   *  @type {string[]}-arr  can be any valid expression as long as they resolve to strings.
+   *  @type { String[] } - arr
+   *  can be any valid expression as long as they resolve to strings.
    * @return This operator
    */
   concat = function (arr: []) {
@@ -416,7 +610,27 @@ export class AggregationBuilder {
     }
     return { $eq: arr };
   };
+  /**
+   * Compares two values and returns:
+   * true when the values are not equivalent.
+   * false when the values are equivalent.
+   * @method  ne Operator
+   *  @type {*} arg1 -expression1
+   *  @type {*} arg2 -expression2
+   * @return this operator
+   */
+  ne = function (arg1: any, arg2: any) {
+    let arr;
 
+    if (arg2) {
+      arr = [arg1, arg2];
+    } else if (!Array.isArray(arg1)) {
+      arr = [arg1];
+    } else {
+      arr = arg1;
+    }
+    return { $ne: arr };
+  };
   /**
    * Converts a date object to a string according to a user-specified format.
    * @method  dateToString Operator
@@ -523,7 +737,7 @@ export class AggregationBuilder {
   };
   /**
    * @method show Operator
-   * @type {Number|null} d
+   * @type {Number|null} - d
    * @returns console.dir(this.aggs,{depth:depth|null})
    */
   show = function (d: Number) {
@@ -556,7 +770,7 @@ export class AggregationBuilder {
    * @method addToSet Operator
    * Returns an array of all unique values that results from applying an expression to each document in a group of documents that share the same group by key
    *$addToSet is only available in the $group stage.
-   * @type {*} key
+   * @type {*} - key
    * @returns this operator
    */
   addToSet = function (key: any) {
@@ -567,7 +781,7 @@ export class AggregationBuilder {
   /**
    * @method avg Operator
    * Returns the average value of the numeric values. $avg ignores non-numeric values.
-   * @type {*} key
+   * @type {*} - key
    * @returns this operator
    */
   avg = function (key: any) {
@@ -578,7 +792,7 @@ export class AggregationBuilder {
   /**
    * @method first Operator
    * Returns the first element in an array.
-   * @type {string} key
+   * @type {string} - key
    * @returns this operator
    */
   first = function (key: string) {
@@ -589,7 +803,7 @@ export class AggregationBuilder {
   /**
    * @method last Operator
    * Returns the last element in an array.
-   * @type {string} key
+   * @type {string} - key
    * @returns this operator
    */
   last = function (key: string) {
@@ -598,7 +812,7 @@ export class AggregationBuilder {
   /**
    * @method max Operator
    * Returns the maximum value
-   * @type {string} key
+   * @type {string} - key
    * @returns this operator
    */
   max = function (key: string) {
@@ -607,27 +821,16 @@ export class AggregationBuilder {
   /**
    * @method min Operator
    * Returns the minimum value
-   * @type {string} key
+   * @type {string} - key
    * @returns this operator
    */
   min = function (key: string) {
     return { $min: key };
   };
   /**
-   * @method push Operator
-   *The $push operator appends a specified value to an array.
-   *If the field is not an array, the operation will fail.
-   * @type {*} data
-   * @returns this operator
-   */
-
-  push = function (data: any) {
-    return { $push: data };
-  };
-  /**
    * @method sum Operator
    * Calculates and returns the sum of numeric values. $sum ignores non-numeric values.
-   * @type {string|1| any[]} data
+   * @type {string|1| any[]} - data
    * @returns this operator
    */
   sum = function (data: string | 1 | any[]) {
@@ -636,8 +839,8 @@ export class AggregationBuilder {
   /**
    * @method multiply Operator
    * Multiplies numbers together and returns the result. Pass the arguments to $multiply in an array.
-   * @type {string|number} key1
-   * @type {string|number} key2
+   * @type {string|number} - key1
+   * @type {string|number} - key2
    * @returns this operator
    */
   multiply = function (key1: string | number, key2: string | number) {
@@ -646,7 +849,7 @@ export class AggregationBuilder {
   /**
    * @method in Operator
    * Returns a boolean indicating whether a specified value is in an array.
-   * @type {any[]} key
+   * @type {any[]} - key
    * @returns this operator
    */
   in = function (key: any[]) {
@@ -655,8 +858,7 @@ export class AggregationBuilder {
   /**
    * @method size Operator
    * Counts and returns the total number of items in an array.
-   * @type {string} ke
-   *y
+   * @type {string} - key
    * @returns this operator
    */
   size = function (key: string) {
@@ -665,7 +867,7 @@ export class AggregationBuilder {
   /**
    * @method mergeObjects Operator
    * Combines multiple documents into a single document.
-   * @type {string|any[]} key
+   * @type {string|any[]} - key
    * @returns this operator
    */
   mergeObjects = function (key: string | any[]) {
@@ -674,8 +876,8 @@ export class AggregationBuilder {
   /**
    * @method concatArrays Operator
    * Concatenates arrays to return the concatenated array.
-   * @type {any[]} arr1
-   * @type {any[]} arr2 ,
+   * @type {any[]} - arr1
+   * @type {any[]} - arr2 ,
    * @returns this operator
    */
   concatArrays = function (arr1: any[], arr2: any[]) {
@@ -684,17 +886,27 @@ export class AggregationBuilder {
   /**
    * @method  accumulator Operator
    * Accumulators are operators that maintain their state as documents progress through the pipeline.
-   * @type {Accumulator}-args {init:any;initArgs?: any[];accumulate:any;accumulateArgs: string[];merge: any;finalize?:any;lang: string}
+   * @type {Accumulator} - arg
+   * @type  {init:any} - Accumulator.init
+   * @type {initArgs?: any[]} - Accumulator.initArgs
+   * @type {accumulate:any} - Accumulator.accumulate
+   * @type {accumulateArgs: - string[]} - Accumulator.accumulateArgs
+   * @type {merge: any} - Accumulator.merge
+   * @type {finalize?:any} - Accumulator.finalize
+   * @type {lang: string} - Accumulator.lang
    * @returns this operator
    */
   accumulator = function (args: Accumulator) {
+    /**
+     * @see Accumulator
+     */
     return { $accumulator: args };
   };
   /**
    * @method round Operator
    * Rounds a number to a whole integer or to a specified decimal place.
-   * @type {String|Number}-num
-   * @type {Number}-place
+   * @type {String|Number} - num
+   * @type {Number} - place
    * @returns this operator
    */
   round = function (num: String | Number, place: Number) {
@@ -703,7 +915,7 @@ export class AggregationBuilder {
   /**
    * @method pull Operator
    * The $pull operator  removes from an existing array all instances of a value or values that match a specified condition.
-   * @type {*}-arg
+   * @type {*} - arg
    * @returns this operator
    */
   pull = function (arg: any) {
@@ -712,16 +924,25 @@ export class AggregationBuilder {
   /**
    * @method reduce Operator
    * Applies an expression to each element in an array and combines them into a single value.
-   * @type {Reduce }-arg  {input: any[] | string;initialValue: any; in: any}
+   * @type {Reduce} - arg
+   * @type  {input: any[] | string} - Reduce.input
+   * @type {initialValue: any} - Reduce.initialValue
+   * @type {in: any} - Reduce.in
    * @returns this operator
    */
   reduce = function (arg: Reduce) {
+    /**
+     * @see Reduce
+     */
     return { $reduce: arg };
   };
   /**
    * @method filter Operator
    * Selects a subset of an array to return based on the specified condition. Returns an array with only those elements that match the condition. The returned elements are in the original order.
-   * @type {Filter}-arg  {input: any[]; as?: String;  cond: any }
+   * @type {Filter} - arg
+   *  @type {input: any[]} - Filter.input
+   * @type {as?: String} - Filter.as
+   * @type {cond: any } - Filter.cond
    * @returns this operator
    */
   filter = function (arg: Filter) {
@@ -739,10 +960,121 @@ export class AggregationBuilder {
   /**
    * @method  arrayElemAt Operator
    * Returns the element at the specified array index.
-   * @type {any[] }-arg
+   * @type {any[] } - arg
    * @returns this operator
    */
   arrayElemAt = function (key: any[]) {
     return { $arrayElemAt: key };
+  };
+  /**
+   * @method  or Operator
+   * The $or operator performs a logical OR operation on an array of two or more <expressions>
+   * and selects the documents that satisfy at least one of the <expressions>.
+   * @type {any} - arg
+   * @returns this operator
+   */
+  or = function (arg: any) {
+    return { $or: arg };
+  };
+  /**
+   * @method  and Operator
+   * $and performs a logical AND operation on an array of one or more expressions
+   * and selects the documents that satisfy all the expressions in the array.
+   * @type {any} - arg
+   * @returns this operator
+   */
+  and = function (arg: any) {
+    return { $and: arg };
+  };
+  /**
+   * @method  gt Operator
+   * $and performs a logical AND operation on an array of one or more expressions
+   * and selects the documents that satisfy all the expressions in the array.
+   * @type {any} - arr1
+   * @type {any} - arr2
+   * @returns this operator
+   */
+  gt = function (arg1: any, arg2: any) {
+    let arr;
+
+    if (arg2) {
+      arr = [arg1, arg2];
+    } else if (!Array.isArray(arg1)) {
+      arr = [arg1];
+    } else {
+      arr = arg1;
+    }
+    return { $gt: arr };
+  };
+  /**
+   * @method  gte Operator
+   * selects those documents where the value of the field is greater than the specified value.
+   * @type {any } - arr1
+   * @type {any} - arr2
+   * @returns this operator
+   */
+  gte = function (arg1: any, arg2: any) {
+    let arr;
+
+    if (arg2) {
+      arr = [arg1, arg2];
+    } else if (!Array.isArray(arg1)) {
+      arr = [arg1];
+    } else {
+      arr = arg1;
+    }
+    return { $gte: arr };
+  };
+  /**
+   * @method  lt Operator
+   * Compares two values and returns:
+   * true when the first value is less than the second value.
+   * false when the first value is greater than or equivalent to the second value.
+   * @type {any } - arr1
+   * @type {any} - arr2
+   * @returns this operator
+   */
+  lt = function (arg1: any, arg2: any) {
+    let arr;
+
+    if (arg2) {
+      arr = [arg1, arg2];
+    } else if (!Array.isArray(arg1)) {
+      arr = [arg1];
+    } else {
+      arr = arg1;
+    }
+    return { $lt: arr };
+  };
+  /**
+   * @method  lte Operator
+   * Compares two values and returns:
+   * true when the first value is less than or equivalent to the second value.
+   * false when the first value is greater than the second value.
+   * @type {any } - arr1
+   * @type {any} - arr2
+   * @returns this operator
+   */
+  lte = function (arg1: any, arg2: any) {
+    let arr;
+
+    if (arg2) {
+      arr = [arg1, arg2];
+    } else if (!Array.isArray(arg1)) {
+      arr = [arg1];
+    } else {
+      arr = arg1;
+    }
+    return { $lte: arr };
+  };
+  /**
+   * @method  push Operator
+   * The $push operator appends a specified value to an array.
+   * If the field is not an array, the operation will fail.
+   * @type {arg: string|number[]} - arg
+   * @returns this operator
+   */
+  push = function (arg: string | number[]) {
+    return { $push: arg };
   };
 }

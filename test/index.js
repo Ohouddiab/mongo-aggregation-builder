@@ -4,8 +4,10 @@ import _ from "lodash";
 // import { isEqual } from 'lodash'
 
 // var _ = require('lodash');
-
+_.find({});
 const agg1 = agg
+  .match()
+  .lookup({})
   .match({ latest: true, company_namespace: { $in: ["demosv"] } })
   .addFields({ allItems: agg.concatArrays("$items", "$return_items") })
   .project({ items: 0, return_items: 0 })
