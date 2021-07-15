@@ -6,6 +6,7 @@ import _ from "lodash";
 // var _ = require('lodash');
 
 const agg1 = agg
+agg.group().sort()
   .match({ latest: true, company_namespace: { $in: ["demosv"] } })
   .addFields({ allItems: agg.concatArrays("$items", "$return_items") })
   .project({ items: 0, return_items: 0 })
