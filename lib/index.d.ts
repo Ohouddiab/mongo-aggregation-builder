@@ -1,5 +1,16 @@
 interface AggregationOptions {
+    /**
+     * allowDiskUse() allows MongoDB to use temporary files on disk to store data exceeding the 100 megabyte
+     * system memory limit while processing a blocking sort operation. If MongoDB requires using more than 100
+     * megabytes of system memory for the blocking sort operation, MongoDB returns an error unless the query
+     * specifies cursor.allowDiskUse().
+     * @type {Boolean} allowDiskUse
+     */
     allowDiskUse: Boolean;
+    /**
+     * Specifies whether to serialize functions on any object passed to the server
+     * @type {Boolean} serializeFunctions
+     */
     serializeFunctions: Boolean;
 }
 interface Options {
@@ -11,135 +22,180 @@ interface Options {
     preserveNullAndEmptyArrays: Boolean;
     unwind: Boolean;
 }
-/**
- * @type {string} _let
- * @example { <var_1>: <$expression>, …, <var_n>: <$expression> },  */
-declare type _let = string;
-/**
- * @type {String}  from - "required", collection to join,
- * @type {String}  localField -  field from the input documents,
- * @type {String}  foreignField - "required", field from the documents of the "from" collection,
- * @type {_let} let - Optional. Specifies the variables to use in the pipeline stages.
- * @see _let
- * @type {any} pipeline - [ pipeline to run on joined collection ],
- * @type {String}  as - output array field.
- *
- */
 interface Lookup {
+    /**
+     * @type  {String}  from - "required", collection to join,
+     */
     from: String;
+    /**
+     * @type  {String}  localField - field from the input documents,
+     */
     localField?: String;
+    /**
+     * @type  {String}  foreignField - field from the documents of the "from" collection,
+     */
     foreignField?: String;
-    let?: _let;
+    /**
+     * @type  {any} let - Optional. Specifies the variables to use in the pipeline stages.
+     * @example { <var_1>: <$expression>, …, <var_n>: <$expression> },  */
+    let?: any;
+    /**
+     * @type  {any} pipeline - [ pipeline to run on joined collection ],
+     */
     pipeline?: any[];
+    /**
+     * @type  {String}  as - Optional. output array field.
+     */
     as?: String;
 }
 interface Res {
+    /**
+     *  @type {string} date -The date to convert to string.must be a valid expression that resolves to a Date, a Timestamp, or an ObjectID.
+     */
     date: String;
+    /**
+     *  @type {*} format -Optional- The date format specification
+     */
     format: any;
+    /**
+     *  @type {string} timezone -Optional- The timezone of the operation result   */
     timezone?: String;
 }
-/**
-* @example
-*  {
-    <outputField1>: [ <stage1>, <stage2>, ... ],
-    <outputField2>: [ <stage1>, <stage2>, ... ],
-    ...
- }
-*/
 interface Facet {
+    /**
+  * @example
+  *  {
+      <outputField1>: [ <stage1>, <stage2>, ... ],
+      <outputField2>: [ <stage1>, <stage2>, ... ],
+      ...
+   }
+  */
     [propName: string]: any[];
 }
-/**
- * @example
- * { <newField>: <expression>, ... }
- */
 interface AddFields {
+    /**
+     * @example
+     * { <newField>: <expression>, ... }
+     */
     [propName: string]: string | any;
 }
-/**
- * @example
- * { <field1>: <value1>, ... }
- */
 interface Set {
+    /**
+     * @example
+     * { <field1>: <value1>, ... }
+     */
     [propName: string]: string | any;
 }
-/**
- * @example
- *  {"<field1>": 0, "<field2>": 0, ... }
- */
 interface Project {
+    /**
+     * @example
+     *  {"<field1>": 0, "<field2>": 0, ... }
+     */
     [propName: string]: number | string | any;
 }
-/**
- * @example
- * { $expr: { <aggregation expression> } }
- */
 interface Match {
+    /**
+     * @example
+     * { $expr: { <aggregation expression> } }
+     */
     [propName: string]: any;
 }
-/**
-* @type {string|null|any} _id
-* @example
-*   {
-    _id: <expression>, // Group By Expression
-    <field1>: { <accumulator1> : <expression1> },
-    ...
-  }
-*/
 interface Group {
+    /**
+  * @type {string|null|any} _id
+  * @example
+  *   {
+      _id: <expression>, // Group By Expression
+      <field1>: { <accumulator1> : <expression1> },
+      ...
+    }
+  */
     _id: string | null | any;
     [propName: string]: any;
 }
-/**
- * @type  {any} init - Function used to initialize the state.
- * @type {any[]} initArgs - Optional. Arguments passed to the init function.
- * @type {any}  accumulate - Function used to accumulate documents.
- * @type {any}  accumulateArgs - Arguments passed to the accumulate function
- * @type {Strng |any}  merge - Function used to merge two internal states.
- * @type {String | any} finalize - Optional. Function used to update the result of the accumulation.
- * @type {String}  lang - The language used in the $accumulator code.
- */
 interface Accumulator {
+    /**
+     * @type  {any} init - Function used to initialize the state.
+     * @example
+     * function (<initArg1>, <initArg2>, ...) {
+     *...
+     * return <initialState>}
+     */
     init: any;
+    /**
+     * @type {any[]} initArgs - Optional. Arguments passed to the init function.
+     */
     initArgs?: any[];
+    /**
+     * @type {any}  accumulate - Function used to accumulate documents.
+     * @example
+     *  function(state, <accumArg1>, <accumArg2>, ...) {
+     * ...
+   * return <newState>
+  }
+     */
     accumulate: any;
+    /**
+     * @type {any}  accumulateArgs - Arguments passed to the accumulate function
+     */
     accumulateArgs: string[];
+    /**
+     * @type {Strng |any}  merge - Function used to merge two internal states.
+     */
     merge: string | any;
+    /**
+     * @type {String | any} finalize - Optional. Function used to update the result of the accumulation.
+     */
     finalize?: string | any;
+    /**
+     * @type {String} lang - The language used in the $accumulator code.
+     */
     lang: string;
 }
-/**
- * @type {string} path - field path;
- * @type {string} includeArrayIndex - Optional.
- * The name of a new field to hold the array index of the element.;
- * @type {boolean} preserveNullAndEmptyArrays- Optional.
- * If true, if the path is null, missing, or an empty array, $unwind outputs the document.
- * If false, if path is null, missing, or an empty array, $unwind does not output a document.
- * The default value is false.;
- */
 interface Unwind {
+    /**
+     * @type {string} path - field path;
+     */
     path: string;
+    /**
+     * @type {string} includeArrayIndex - Optional.
+     * The name of a new field to hold the array index of the element.;
+     */
     includeArrayIndex?: string;
+    /**
+     * @type {boolean} preserveNullAndEmptyArrays- Optional.
+     * If true, if the path is null, missing, or an empty array, $unwind outputs the document.
+     * If false, if path is null, missing, or an empty array, $unwind does not output a document.
+     * The default value is false.;
+     */
     preserveNullAndEmptyArrays?: boolean;
 }
-/**
- * @type {any[]|string} input - Can be any valid expression that resolves to an array.
- * @type {any} initialValue - The initial cumulative value set before in is applied to the first element of the input array.
- * @type {any} in - A valid expression that $reduce applies to each element in the input array in left-to-right order.
- */
 interface Reduce {
+    /**
+     * @type {any[]|string} input - Can be any valid expression that resolves to an array.
+     */
     input: any[] | string;
+    /**
+     * @type {any} initialValue - The initial cumulative value set before in is applied to the first element of the input array.
+     */
     initialValue: any;
+    /**
+     * @type {any} in - A valid expression that $reduce applies to each element in the input array in left-to-right order.
+     */
     in: any;
 }
-/**
- * @type {any[]} input - An expression that resolves to an array.
- * @type {string} as - Optional. A name for the variable that represents each individual element of the input array
- * @type {any} cond - An expression that resolves to a boolean value used to determine if an element should be included in the output array.
- */
 interface Filter {
+    /**
+     * @type {any[]} input - An expression that resolves to an array.
+     */
     input: any[];
+    /**
+     * @type {string} as - Optional. A name for the variable that represents each individual element of the input array
+     */
     as?: String;
+    /**
+     * @type {any} cond - An expression that resolves to a boolean value used to determine if an element should be included in the output array.
+     */
     cond: any;
 }
 export declare class AggregationBuilder {
@@ -474,16 +530,6 @@ export declare class AggregationBuilder {
         $min: string;
     };
     /**
-     * @method push Operator
-     *The $push operator appends a specified value to an array.
-     *If the field is not an array, the operation will fail.
-     * @type {*} - data
-     * @returns this operator
-     */
-    push: (data: any) => {
-        $push: any;
-    };
-    /**
      * @method sum Operator
      * Calculates and returns the sum of numeric values. $sum ignores non-numeric values.
      * @type {string|1| any[]} - data
@@ -680,6 +726,16 @@ export declare class AggregationBuilder {
      */
     lte: (arg1: any, arg2: any) => {
         $lte: any[];
+    };
+    /**
+     * @method  push Operator
+     * The $push operator appends a specified value to an array.
+     * If the field is not an array, the operation will fail.
+     * @type {arg: string|number[]} - arg
+     * @returns this operator
+     */
+    push: (arg: string | number[]) => {
+        $push: string | number[];
     };
 }
 export {};
