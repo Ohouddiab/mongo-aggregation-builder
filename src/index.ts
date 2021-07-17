@@ -215,7 +215,7 @@ interface Filter {
   cond: any;
 }
 
-export class AggregationBuilder {
+export default class AggregationBuilder {
   opts: AggregationOptions = {
     allowDiskUse: true,
     serializeFunctions: true,
@@ -389,37 +389,41 @@ export class AggregationBuilder {
    * @type {[propName: string]: string | any} - filelds ,
    * @return this stage
    */
-  addFields: (filelds: AddFields, options: Options) => AggregationBuilder =
-    function (filelds, options) {
-      if (options && options.only && this.only(`${options.only}`)) return this;
-      if (options && options.alone && this.alone(`${options.alone}_addFields`))
-        return this;
-      /**
+  addFields: (
+    filelds: AddFields,
+    options: Options
+  ) => AggregationBuilder = function (filelds, options) {
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_addFields`))
+      return this;
+    /**
  * @see AddFields
  
  */
-      this.aggs.push({ $addFields: filelds });
-      this.isIf = false;
-      return this;
-    };
+    this.aggs.push({ $addFields: filelds });
+    this.isIf = false;
+    return this;
+  };
   /**
    * @method project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
    * @type {[propName: string]: number | string | any} - projection
    * @return this stage
    */
-  project: (projection: Project, options: Options) => AggregationBuilder =
-    function (projection, options) {
-      if (options && options.only && this.only(`${options.only}`)) return this;
-      if (options && options.alone && this.alone(`${options.alone}_project`))
-        return this;
-      /**
-       * @see Project
-       */
-      this.aggs.push({ $project: projection });
-      this.isIf = false;
+  project: (
+    projection: Project,
+    options: Options
+  ) => AggregationBuilder = function (projection, options) {
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_project`))
       return this;
-    };
+    /**
+     * @see Project
+     */
+    this.aggs.push({ $project: projection });
+    this.isIf = false;
+    return this;
+  };
   /**
    * @method limit Stage
    * Limits the number of documents passed to the next stage in the pipeline.
@@ -547,19 +551,17 @@ export class AggregationBuilder {
    *  @type {Any} - newRoot
    * @return this stage
    */
-  replaceRoot: (newRoot: any, options: Options) => AggregationBuilder =
-    function (newRoot, options) {
-      if (options && options.only && this.only(`${options.only}`)) return this;
-      if (
-        options &&
-        options.alone &&
-        this.alone(`${options.alone}_replaceRoot `)
-      )
-        return this;
-      this.aggs.push({ $replaceRoot: newRoot });
-      this.isIf = false;
+  replaceRoot: (
+    newRoot: any,
+    options: Options
+  ) => AggregationBuilder = function (newRoot, options) {
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_replaceRoot `))
       return this;
-    };
+    this.aggs.push({ $replaceRoot: newRoot });
+    this.isIf = false;
+    return this;
+  };
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
