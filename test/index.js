@@ -1,4 +1,4 @@
-import { AggregationBuilder } from "mongo-aggregation-builder";
+import AggregationBuilder from "mongo-aggregation-builder";
 const agg = new AggregationBuilder();
 
 _.find({});
