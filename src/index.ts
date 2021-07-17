@@ -334,7 +334,7 @@ export default class AggregationBuilder {
      * @see Match
      */
     if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) {
-      stage = this.aggs[this.aggs.length - 1].$match;
+      stage = { $match: this.aggs[this.aggs.length - 1].$match };
     } else {
       stage = {
         $match: {},
@@ -372,7 +372,7 @@ export default class AggregationBuilder {
      * @see Match
      */
     if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) {
-      stage = this.aggs[this.aggs.length - 1].$match;
+      stage = { $match: this.aggs[this.aggs.length - 1].$match };
     } else {
       stage = {
         $match: {},
