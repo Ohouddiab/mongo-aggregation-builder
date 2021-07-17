@@ -1,4 +1,4 @@
-import { AggregationBuilder } from "./../lib/index.js";
+import AggregationBuilder from "./../lib/index.js";
 const agg = new AggregationBuilder();
 import _ from "lodash";
 // import { isEqual } from 'lodash'
@@ -37,7 +37,7 @@ const agg1 = agg
         ),
         "Tax rate": "$allItems.tax.name",
         Status: "$status",
-        line_total: "$allItems.line_total",
+        line_total: "$allItems.line_total"
       })
       .project({
         _id: 1,
@@ -58,7 +58,7 @@ const agg1 = agg
         pre_total: 1,
         return_total: 1,
         total: 1,
-        line_total: 1,
+        line_total: 1
       })
       .sort({ _id: -1 })
       .skip(0)
@@ -86,7 +86,7 @@ const agg1 = agg
             "$allItems.line_total",
             0
           )
-        ),
+        )
       })
       .project({
         _id: 0,
@@ -96,14 +96,14 @@ const agg1 = agg
         results: agg.reduce({
           input: "$allItem",
           initalValue: 0,
-          in: agg.sum("$return_total"),
+          in: agg.sum("$return_total")
         }),
         items: agg.filter({
           input: "$allItems",
-          cond: agg.eq("$pre_total", "$return_total"),
-        }),
+          cond: agg.eq("$pre_total", "$return_total")
+        })
       })
-      .get(),
+      .get()
   })
   .replaceRoot({ newRoot: "$name" })
   .show();
