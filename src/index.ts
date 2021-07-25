@@ -244,7 +244,7 @@ export class AggregationBuilder {
    * @type {String} Lookup.as - Optional. output array field
    * @return this stage
    */
-  lookup: (arg: Lookup, options: Options) => AggregationBuilder = function (
+  lookup: (arg: Lookup, options?: Options) => AggregationBuilder = function (
     arg,
     options
   ) {
@@ -305,7 +305,7 @@ export class AggregationBuilder {
   If false, if path is null, missing, or an empty array, $unwind does not output a document. The default value is false.;
    * @return this stage
    */
-  unwind: (arg: Unwind, options: Options) => AggregationBuilder = function (
+  unwind: (arg: Unwind, options?: Options) => AggregationBuilder = function (
     arg,
     options
   ) {
@@ -325,9 +325,9 @@ export class AggregationBuilder {
    * @type {[propName: string]: any} - arg
    * @return this stage
    */
-  matchSmart: (arg: Match, options: Options) => AggregationBuilder = function (
-    arg: Match,
-    options: Options
+  matchSmart: (arg: Match, options?: Options) => AggregationBuilder = function (
+    arg,
+    options
   ) {
     let stage;
     /**
@@ -357,9 +357,9 @@ export class AggregationBuilder {
    * @type {[propName: string]: any} - arg
    * @return this stage
    *    */
-  match: (arg: Match, options: Options) => AggregationBuilder = function (
-    arg: Match,
-    options: Options
+  match: (arg: Match, options?: Options) => AggregationBuilder = function (
+    arg,
+    options
   ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_match`))
@@ -391,7 +391,7 @@ export class AggregationBuilder {
    */
   addFields: (
     filelds: AddFields,
-    options: Options
+    options?: Options
   ) => AggregationBuilder = function (filelds, options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_addFields`))
@@ -412,7 +412,7 @@ export class AggregationBuilder {
    */
   project: (
     projection: Project,
-    options: Options
+    options?: Options
   ) => AggregationBuilder = function (projection, options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_project`))
@@ -430,7 +430,7 @@ export class AggregationBuilder {
    * @type {Number} - Limit
    * @return this stage
    */
-  limit: (limit: Number, options: Options) => AggregationBuilder = function (
+  limit: (limit: Number, options?: Options) => AggregationBuilder = function (
     limit,
     options
   ) {
@@ -447,9 +447,9 @@ export class AggregationBuilder {
    * @type {Number} - skip
    * @return this stage
    */
-  skip: (skip: Number, options: Options) => AggregationBuilder = function (
-    skip: Number,
-    options: Options
+  skip: (skip: Number, options?: Options) => AggregationBuilder = function (
+    skip,
+    options
   ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_skip`))
@@ -464,7 +464,7 @@ export class AggregationBuilder {
    *  @type {[propName: string]: string | any} - field
    * @return this stage
    */
-  set: (field: Set, options: Options) => AggregationBuilder = function (
+  set: (field: Set, options?: Options) => AggregationBuilder = function (
     field,
     options
   ) {
@@ -487,7 +487,7 @@ export class AggregationBuilder {
    * @type {[propName: string]: any} - Group.propName
    * @return this stage
    */
-  group: (arg: Group, options: Options) => AggregationBuilder = function (
+  group: (arg: Group, options?: Options) => AggregationBuilder = function (
     arg,
     options
   ) {
@@ -512,10 +512,10 @@ export class AggregationBuilder {
    * [1-->Sort ascending; -1-->Sort descending].
    * @return this stage
    */
-  sort: (sortOrder: Number, options: Options) => AggregationBuilder = function (
-    sortOrder,
-    options
-  ) {
+  sort: (
+    sortOrder: Number,
+    options?: Options
+  ) => AggregationBuilder = function (sortOrder, options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_sort`))
       return this;
@@ -529,7 +529,7 @@ export class AggregationBuilder {
    * @type {[propName: string]: any[]} - arg
    * @return this stage
    */
-  facet: (arg: Facet, options: Options) => AggregationBuilder = function (
+  facet: (arg: Facet, options?: Options) => AggregationBuilder = function (
     arg,
     options
   ) {
@@ -553,7 +553,7 @@ export class AggregationBuilder {
    */
   replaceRoot: (
     newRoot: any,
-    options: Options
+    options?: Options
   ) => AggregationBuilder = function (newRoot, options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_replaceRoot `))
@@ -760,7 +760,7 @@ export class AggregationBuilder {
     return Object.values(this.alones).includes(key) ? false : true;
   };
   isIf: Boolean = false;
-  if: (condition: any, options: Options) => AggregationBuilder = function (
+  if: (condition: any, options?: Options) => AggregationBuilder = function (
     condition,
     options
   ) {
