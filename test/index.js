@@ -1,8 +1,5 @@
-// import { AggregationBuilder } from "./../lib/index.js";
-import { AggregationBuilder } from "mongo-aggregation-builder";
-// const agg = new AggregationBuilder();
-import _ from "lodash";
-// import { isEqual } from 'lodash'
+import AggregationBuilder from "mongo-aggregation-builder";
+const agg = new AggregationBuilder();
 
 // var _ = require('lodash');
 _.find({});

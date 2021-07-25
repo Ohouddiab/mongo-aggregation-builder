@@ -198,7 +198,7 @@ interface Filter {
    */
   cond: any;
 }
-export declare class AggregationBuilder {
+export default class AggregationBuilder {
   opts: AggregationOptions;
   model: any;
   aggs: any[];
