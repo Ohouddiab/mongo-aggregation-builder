@@ -1,13 +1,11 @@
-import AggregationBuilder from "mongo-aggregation-builder";
+import { AggregationBuilder } from "mongo-aggregation-builder";
 const agg = new AggregationBuilder();
 
 // var _ = require('lodash');
-_.find({});
-new AggregationBuilder.project({});
+// _.find({});
+// new AggregationBuilder.project({});
 const agg1 = agg
-  .match({})
-  .match()
-  .lookup({})
+  .sort({ time: -1 })
   .match({ latest: true, company_namespace: { $in: ["demosv"] } })
   .addFields({ allItems: agg.concatArrays("$items", "$return_items") })
   .project({ items: 0, return_items: 0 })
@@ -105,7 +103,7 @@ const agg1 = agg
       })
       .get(),
   })
-  .replaceRoot({ newRoot: "$name" }, only)
+  .replaceRoot({ newRoot: "$name" })
   .show();
 
 // const agg2 = [

@@ -214,6 +214,14 @@ interface Filter {
    */
   cond: any;
 }
+interface Sort {
+  /**
+   * @example
+   *   { $sort: { <field1>: <sort order>, <field2>: <sort order> ... } }
+   */
+
+  [propName: string]: Number;
+}
 
 export default class AggregationBuilder {
   opts: AggregationOptions = {
@@ -508,17 +516,19 @@ export default class AggregationBuilder {
   /**
    * @method sort Stage
    * Sorts all input documents and returns them to the pipeline in sorted order.
-   *  @type {Number} - sortOrder
+   *  @type {Sort} - sortOrder
    * [1-->Sort ascending; -1-->Sort descending].
+   * @see Sort
    * @return this stage
    */
-  sort: (
-    sortOrder: Number,
-    options?: Options
-  ) => AggregationBuilder = function (sortOrder, options) {
+  sort: (sortOrder: Sort, options?: Options) => AggregationBuilder = function (
+    sortOrder,
+    options
+  ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_sort`))
       return this;
+
     this.aggs.push({ $sort: sortOrder });
     this.isIf = false;
     return this;

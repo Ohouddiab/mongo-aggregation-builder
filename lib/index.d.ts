@@ -198,6 +198,13 @@ interface Filter {
    */
   cond: any;
 }
+interface Sort {
+  /**
+   * @example
+   *   { $sort: { <field1>: <sort order>, <field2>: <sort order> ... } }
+   */
+  [propName: string]: Number;
+}
 export default class AggregationBuilder {
   opts: AggregationOptions;
   model: any;
@@ -290,11 +297,12 @@ export default class AggregationBuilder {
   /**
    * @method sort Stage
    * Sorts all input documents and returns them to the pipeline in sorted order.
-   *  @type {Number} - sortOrder
+   *  @type {Sort} - sortOrder
    * [1-->Sort ascending; -1-->Sort descending].
+   * @see Sort
    * @return this stage
    */
-  sort: (sortOrder: Number, options?: Options) => AggregationBuilder;
+  sort: (sortOrder: Sort, options?: Options) => AggregationBuilder;
   /**
    * @method facet Stage
    * Processes multiple aggregation pipelines within a single stage on the same set of input documents.
