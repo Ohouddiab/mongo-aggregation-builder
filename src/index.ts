@@ -237,7 +237,7 @@ export default class AggregationBuilder {
     this.opts.allowDiskUse = options.allowDiskUse || true;
     this.opts.serializeFunctions = options.serializeFunctions || true;
   };
-  constructor(model: any) {
+  constructor(model?: any) {
     this.model = model;
     this.aggs = this.aggs || [];
   }
@@ -262,6 +262,7 @@ export default class AggregationBuilder {
     if (options && options.alone && this.alone(`${options.alone}_lookup`))
       return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
+    if (this.isIf) return this;
     let stage: any;
     if (arg && arg.pipeline) {
       /**
@@ -303,7 +304,7 @@ export default class AggregationBuilder {
             options.preserveNullAndEmptyArrays == false ? false : true,
         },
       });
-    // this.isIf = false
+    this.isIf = false;
     return this;
   };
   /**
@@ -323,6 +324,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_unwind`))
       return this;
+    if (this.isIf) return this;
     /**
      * @see Unwind
      */
@@ -341,6 +343,7 @@ export default class AggregationBuilder {
     options
   ) {
     let stage;
+    if (this.isIf) return this;
     /**
      * @see Match
      */
@@ -407,6 +410,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_addFields`))
       return this;
+    if (this.isIf) return this;
     /**
  * @see AddFields
  
@@ -428,6 +432,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_project`))
       return this;
+    if (this.isIf) return this;
     /**
      * @see Project
      */
@@ -448,6 +453,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_limit`))
       return this;
+    if (this.isIf) return this;
     this.aggs.push({ $limit: limit });
     this.isIf = false;
     return this;
@@ -465,6 +471,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_skip`))
       return this;
+    if (this.isIf) return this;
     this.aggs.push({ $skip: skip });
     this.isIf = false;
     return this;
@@ -482,6 +489,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_set`))
       return this;
+    if (this.isIf) return this;
     /**
      * @see Set
      */
@@ -505,6 +513,7 @@ export default class AggregationBuilder {
     if (options && options.alone && this.alone(`${options.alone}_group`))
       return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
+    if (this.isIf) return this;
     let stage: any;
     /**
      * @see Group
@@ -531,7 +540,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_sort`))
       return this;
-
+    if (this.isIf) return this;
     this.aggs.push({ $sort: sortOrder });
     this.isIf = false;
     return this;
@@ -549,6 +558,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_facet`))
       return this;
+    if (this.isIf) return this;
     let stage: any;
     /**
      * @see Facet
@@ -571,6 +581,7 @@ export default class AggregationBuilder {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_replaceRoot `))
       return this;
+    if (this.isIf) return this;
     this.aggs.push({ $replaceRoot: newRoot });
     this.isIf = false;
     return this;
@@ -763,7 +774,7 @@ export default class AggregationBuilder {
    * @type {Number|null} - d
    * @returns console.dir(this.aggs,{depth:depth|null})
    */
-  show = function (d: Number) {
+  show = function (d?: Number) {
     let depth = d ? d : null;
     console.dir(this.aggs, { depth: depth || null });
     return this;

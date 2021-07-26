@@ -507,7 +507,7 @@ export default class AggregationBuilder {
    * @type {Number|null} - d
    * @returns console.dir(this.aggs,{depth:depth|null})
    */
-  show: (d: Number) => any;
+  show: (d?: Number | undefined) => any;
   alones: any;
   alone: (key: any) => boolean;
   only: (key: String) => boolean;
