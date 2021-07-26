@@ -5,6 +5,9 @@ const agg = new AggregationBuilder();
 // _.find({});
 // new AggregationBuilder.project({});
 const agg1 = agg
+  .addFields(
+    agg.dateToString(agg.convert("$time", "date"), "%y-%m-%d", "Asia/Aamman")
+  )
   .sort({ time: -1 })
   .match({ latest: true, company_namespace: { $in: ["demosv"] } })
   .addFields({ allItems: agg.concatArrays("$items", "$return_items") })
@@ -13,6 +16,13 @@ const agg1 = agg
   .match({})
   .facet({
     docs: new AggregationBuilder()
+      .addFields(
+        agg.dateToString(
+          agg.convert("$time", "date"),
+          "%y-%m-%d",
+          "Asia/Aamman"
+        )
+      )
       .addFields({
         "Rep Name": agg.concat(["$creator.type", " ", "$creator.name"]),
         "Client name": "$client_name",
@@ -215,4 +225,4 @@ const agg1 = agg
 // // console.log(_.isEqual(aggg.aggs, agg2))
 // console.log(
 //   JSON.parse(JSON.stringify(agg2)) == JSON.parse(JSON.stringify(aggg.aggs))
-// );
+// )

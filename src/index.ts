@@ -15,13 +15,13 @@ interface AggregationOptions {
 }
 
 interface Options {
-  and: Boolean;
-  or: Boolean;
-  smart: Boolean;
-  only: Boolean;
-  alone: String;
-  preserveNullAndEmptyArrays: Boolean;
-  unwind: Boolean;
+  and?: Boolean;
+  or?: Boolean;
+  smart?: Boolean;
+  only?: String;
+  alone?: String;
+  preserveNullAndEmptyArrays?: Boolean;
+  unwind?: Boolean;
 }
 interface Lookup {
   /**
@@ -57,7 +57,7 @@ interface Res {
   /**
    *  @type {string} date -The date to convert to string.must be a valid expression that resolves to a Date, a Timestamp, or an ObjectID.
    */
-  date: String;
+  date: String | any;
   /**
    *  @type {*} format -Optional- The date format specification
    */
@@ -67,7 +67,10 @@ interface Res {
 
   timezone?: String;
 }
-
+interface Convert {
+  input: any;
+  to: String;
+}
 interface Facet {
   /**
 * @example   
@@ -651,7 +654,11 @@ export default class AggregationBuilder {
    *  @type {string} timezone -Optional- The timezone of the operation result
    * @return this operator
    */
-  dateToString = function (date: String, format?: any, timezone?: String) {
+  dateToString = function (
+    date: String | any,
+    format?: any,
+    timezone?: String
+  ) {
     let res: Res = {
       date: date,
       format: format && format != false ? format : "%Y-%m-%d",
@@ -669,7 +676,11 @@ export default class AggregationBuilder {
    *
    */
   convert = function (input: any, to: String) {
-    return { $convert: { input: input, to: to } };
+    let data: Convert = {
+      input: input,
+      to: to,
+    };
+    return data;
   };
   /**
    * Converts a value to an ObjectId().

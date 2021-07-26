@@ -14,13 +14,13 @@ interface AggregationOptions {
   serializeFunctions: Boolean;
 }
 interface Options {
-  and: Boolean;
-  or: Boolean;
-  smart: Boolean;
-  only: Boolean;
-  alone: String;
-  preserveNullAndEmptyArrays: Boolean;
-  unwind: Boolean;
+  and?: Boolean;
+  or?: Boolean;
+  smart?: Boolean;
+  only?: String;
+  alone?: String;
+  preserveNullAndEmptyArrays?: Boolean;
+  unwind?: Boolean;
 }
 interface Lookup {
   /**
@@ -52,7 +52,7 @@ interface Res {
   /**
    *  @type {string} date -The date to convert to string.must be a valid expression that resolves to a Date, a Timestamp, or an ObjectID.
    */
-  date: String;
+  date: String | any;
   /**
    *  @type {*} format -Optional- The date format specification
    */
@@ -60,6 +60,10 @@ interface Res {
   /**
    *  @type {string} timezone -Optional- The timezone of the operation result   */
   timezone?: String;
+}
+interface Convert {
+  input: any;
+  to: String;
 }
 interface Facet {
   /**
@@ -389,7 +393,7 @@ export default class AggregationBuilder {
    * @return this operator
    */
   dateToString: (
-    date: String,
+    date: String | any,
     format?: any,
     timezone?: String | undefined
   ) => Res;
@@ -401,15 +405,7 @@ export default class AggregationBuilder {
    * @return this operator
    *
    */
-  convert: (
-    input: any,
-    to: String
-  ) => {
-    $convert: {
-      input: any;
-      to: String;
-    };
-  };
+  convert: (input: any, to: String) => Convert;
   /**
    * Converts a value to an ObjectId().
    *an ObjectId for the hexadecimal string of length 24.
