@@ -1,13 +1,14 @@
-import AggregationBuilder from "./../lib/index.js";
+import { AggregationBuilder } from "mongo-aggregation-builder";
 const agg = new AggregationBuilder();
-import _ from "lodash";
-// import { isEqual } from 'lodash'
 
 // var _ = require('lodash');
-_.find({});
+// _.find({});
+// new AggregationBuilder.project({});
 const agg1 = agg
-  .match()
-  .lookup({})
+  .addFields(
+    agg.dateToString(agg.convert("$time", "date"), "%y-%m-%d", "Asia/Aamman")
+  )
+  .sort({ time: -1 })
   .match({ latest: true, company_namespace: { $in: ["demosv"] } })
   .addFields({ allItems: agg.concatArrays("$items", "$return_items") })
   .project({ items: 0, return_items: 0 })
@@ -15,6 +16,13 @@ const agg1 = agg
   .match({})
   .facet({
     docs: new AggregationBuilder()
+      .addFields(
+        agg.dateToString(
+          agg.convert("$time", "date"),
+          "%y-%m-%d",
+          "Asia/Aamman"
+        )
+      )
       .addFields({
         "Rep Name": agg.concat(["$creator.type", " ", "$creator.name"]),
         "Client name": "$client_name",
@@ -37,7 +45,7 @@ const agg1 = agg
         ),
         "Tax rate": "$allItems.tax.name",
         Status: "$status",
-        line_total: "$allItems.line_total"
+        line_total: "$allItems.line_total",
       })
       .project({
         _id: 1,
@@ -58,7 +66,7 @@ const agg1 = agg
         pre_total: 1,
         return_total: 1,
         total: 1,
-        line_total: 1
+        line_total: 1,
       })
       .sort({ _id: -1 })
       .skip(0)
@@ -86,7 +94,7 @@ const agg1 = agg
             "$allItems.line_total",
             0
           )
-        )
+        ),
       })
       .project({
         _id: 0,
@@ -96,14 +104,14 @@ const agg1 = agg
         results: agg.reduce({
           input: "$allItem",
           initalValue: 0,
-          in: agg.sum("$return_total")
+          in: agg.sum("$return_total"),
         }),
         items: agg.filter({
           input: "$allItems",
-          cond: agg.eq("$pre_total", "$return_total")
-        })
+          cond: agg.eq("$pre_total", "$return_total"),
+        }),
       })
-      .get()
+      .get(),
   })
   .replaceRoot({ newRoot: "$name" })
   .show();
@@ -217,4 +225,4 @@ const agg1 = agg
 // // console.log(_.isEqual(aggg.aggs, agg2))
 // console.log(
 //   JSON.parse(JSON.stringify(agg2)) == JSON.parse(JSON.stringify(aggg.aggs))
-// );
+// )

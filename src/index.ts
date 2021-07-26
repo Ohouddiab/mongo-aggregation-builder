@@ -15,13 +15,13 @@ interface AggregationOptions {
 }
 
 interface Options {
-  and: Boolean;
-  or: Boolean;
-  smart: Boolean;
-  only: Boolean;
-  alone: String;
-  preserveNullAndEmptyArrays: Boolean;
-  unwind: Boolean;
+  and?: Boolean;
+  or?: Boolean;
+  smart?: Boolean;
+  only?: String;
+  alone?: String;
+  preserveNullAndEmptyArrays?: Boolean;
+  unwind?: Boolean;
 }
 interface Lookup {
   /**
@@ -57,7 +57,7 @@ interface Res {
   /**
    *  @type {string} date -The date to convert to string.must be a valid expression that resolves to a Date, a Timestamp, or an ObjectID.
    */
-  date: String;
+  date: String | any;
   /**
    *  @type {*} format -Optional- The date format specification
    */
@@ -67,7 +67,10 @@ interface Res {
 
   timezone?: String;
 }
-
+interface Convert {
+  input: any;
+  to: String;
+}
 interface Facet {
   /**
 * @example   
@@ -214,6 +217,14 @@ interface Filter {
    */
   cond: any;
 }
+interface Sort {
+  /**
+   * @example
+   *   { $sort: { <field1>: <sort order>, <field2>: <sort order> ... } }
+   */
+
+  [propName: string]: Number;
+}
 
 export default class AggregationBuilder {
   opts: AggregationOptions = {
@@ -244,7 +255,7 @@ export default class AggregationBuilder {
    * @type {String} Lookup.as - Optional. output array field
    * @return this stage
    */
-  lookup: (arg: Lookup, options: Options) => AggregationBuilder = function (
+  lookup: (arg: Lookup, options?: Options) => AggregationBuilder = function (
     arg,
     options
   ) {
@@ -305,7 +316,7 @@ export default class AggregationBuilder {
   If false, if path is null, missing, or an empty array, $unwind does not output a document. The default value is false.;
    * @return this stage
    */
-  unwind: (arg: Unwind, options: Options) => AggregationBuilder = function (
+  unwind: (arg: Unwind, options?: Options) => AggregationBuilder = function (
     arg,
     options
   ) {
@@ -325,9 +336,9 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - arg
    * @return this stage
    */
-  matchSmart: (arg: Match, options: Options) => AggregationBuilder = function (
-    arg: Match,
-    options: Options
+  matchSmart: (arg: Match, options?: Options) => AggregationBuilder = function (
+    arg,
+    options
   ) {
     let stage;
     /**
@@ -357,9 +368,9 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - arg
    * @return this stage
    *    */
-  match: (arg: Match, options: Options) => AggregationBuilder = function (
-    arg: Match,
-    options: Options
+  match: (arg: Match, options?: Options) => AggregationBuilder = function (
+    arg,
+    options
   ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_match`))
@@ -391,7 +402,7 @@ export default class AggregationBuilder {
    */
   addFields: (
     filelds: AddFields,
-    options: Options
+    options?: Options
   ) => AggregationBuilder = function (filelds, options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_addFields`))
@@ -412,7 +423,7 @@ export default class AggregationBuilder {
    */
   project: (
     projection: Project,
-    options: Options
+    options?: Options
   ) => AggregationBuilder = function (projection, options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_project`))
@@ -430,7 +441,7 @@ export default class AggregationBuilder {
    * @type {Number} - Limit
    * @return this stage
    */
-  limit: (limit: Number, options: Options) => AggregationBuilder = function (
+  limit: (limit: Number, options?: Options) => AggregationBuilder = function (
     limit,
     options
   ) {
@@ -447,9 +458,9 @@ export default class AggregationBuilder {
    * @type {Number} - skip
    * @return this stage
    */
-  skip: (skip: Number, options: Options) => AggregationBuilder = function (
-    skip: Number,
-    options: Options
+  skip: (skip: Number, options?: Options) => AggregationBuilder = function (
+    skip,
+    options
   ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_skip`))
@@ -464,7 +475,7 @@ export default class AggregationBuilder {
    *  @type {[propName: string]: string | any} - field
    * @return this stage
    */
-  set: (field: Set, options: Options) => AggregationBuilder = function (
+  set: (field: Set, options?: Options) => AggregationBuilder = function (
     field,
     options
   ) {
@@ -487,7 +498,7 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - Group.propName
    * @return this stage
    */
-  group: (arg: Group, options: Options) => AggregationBuilder = function (
+  group: (arg: Group, options?: Options) => AggregationBuilder = function (
     arg,
     options
   ) {
@@ -508,17 +519,19 @@ export default class AggregationBuilder {
   /**
    * @method sort Stage
    * Sorts all input documents and returns them to the pipeline in sorted order.
-   *  @type {Number} - sortOrder
+   *  @type {Sort} - sortOrder
    * [1-->Sort ascending; -1-->Sort descending].
+   * @see Sort
    * @return this stage
    */
-  sort: (sortOrder: Number, options: Options) => AggregationBuilder = function (
+  sort: (sortOrder: Sort, options?: Options) => AggregationBuilder = function (
     sortOrder,
     options
   ) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_sort`))
       return this;
+
     this.aggs.push({ $sort: sortOrder });
     this.isIf = false;
     return this;
@@ -529,7 +542,7 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any[]} - arg
    * @return this stage
    */
-  facet: (arg: Facet, options: Options) => AggregationBuilder = function (
+  facet: (arg: Facet, options?: Options) => AggregationBuilder = function (
     arg,
     options
   ) {
@@ -553,7 +566,7 @@ export default class AggregationBuilder {
    */
   replaceRoot: (
     newRoot: any,
-    options: Options
+    options?: Options
   ) => AggregationBuilder = function (newRoot, options) {
     if (options && options.only && this.only(`${options.only}`)) return this;
     if (options && options.alone && this.alone(`${options.alone}_replaceRoot `))
@@ -641,7 +654,11 @@ export default class AggregationBuilder {
    *  @type {string} timezone -Optional- The timezone of the operation result
    * @return this operator
    */
-  dateToString = function (date: String, format?: any, timezone?: String) {
+  dateToString = function (
+    date: String | any,
+    format?: any,
+    timezone?: String
+  ) {
     let res: Res = {
       date: date,
       format: format && format != false ? format : "%Y-%m-%d",
@@ -659,7 +676,11 @@ export default class AggregationBuilder {
    *
    */
   convert = function (input: any, to: String) {
-    return { $convert: { input: input, to: to } };
+    let data: Convert = {
+      input: input,
+      to: to,
+    };
+    return data;
   };
   /**
    * Converts a value to an ObjectId().
@@ -760,7 +781,7 @@ export default class AggregationBuilder {
     return Object.values(this.alones).includes(key) ? false : true;
   };
   isIf: Boolean = false;
-  if: (condition: any, options: Options) => AggregationBuilder = function (
+  if: (condition: any, options?: Options) => AggregationBuilder = function (
     condition,
     options
   ) {

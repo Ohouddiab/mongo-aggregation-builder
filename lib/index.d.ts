@@ -14,13 +14,13 @@ interface AggregationOptions {
   serializeFunctions: Boolean;
 }
 interface Options {
-  and: Boolean;
-  or: Boolean;
-  smart: Boolean;
-  only: Boolean;
-  alone: String;
-  preserveNullAndEmptyArrays: Boolean;
-  unwind: Boolean;
+  and?: Boolean;
+  or?: Boolean;
+  smart?: Boolean;
+  only?: String;
+  alone?: String;
+  preserveNullAndEmptyArrays?: Boolean;
+  unwind?: Boolean;
 }
 interface Lookup {
   /**
@@ -52,7 +52,7 @@ interface Res {
   /**
    *  @type {string} date -The date to convert to string.must be a valid expression that resolves to a Date, a Timestamp, or an ObjectID.
    */
-  date: String;
+  date: String | any;
   /**
    *  @type {*} format -Optional- The date format specification
    */
@@ -60,6 +60,10 @@ interface Res {
   /**
    *  @type {string} timezone -Optional- The timezone of the operation result   */
   timezone?: String;
+}
+interface Convert {
+  input: any;
+  to: String;
 }
 interface Facet {
   /**
@@ -198,6 +202,13 @@ interface Filter {
    */
   cond: any;
 }
+interface Sort {
+  /**
+   * @example
+   *   { $sort: { <field1>: <sort order>, <field2>: <sort order> ... } }
+   */
+  [propName: string]: Number;
+}
 export default class AggregationBuilder {
   opts: AggregationOptions;
   model: any;
@@ -217,7 +228,7 @@ export default class AggregationBuilder {
    * @type {String} Lookup.as - Optional. output array field
    * @return this stage
    */
-  lookup: (arg: Lookup, options: Options) => AggregationBuilder;
+  lookup: (arg: Lookup, options?: Options) => AggregationBuilder;
   /**
      *  @method unwind Stage
      * Filters the documents to pass only the documents that match the specified condition(s)Deconstructs an array field from the input documents to output a document for each element. Each output document is the input document with the value of the array field replaced by the element.
@@ -228,56 +239,56 @@ export default class AggregationBuilder {
     If false, if path is null, missing, or an empty array, $unwind does not output a document. The default value is false.;
      * @return this stage
      */
-  unwind: (arg: Unwind, options: Options) => AggregationBuilder;
+  unwind: (arg: Unwind, options?: Options) => AggregationBuilder;
   /**
    *  @method matchSmart Stage
    * Filters the documents to pass only the documents that match the specified condition(s)
    * @type {[propName: string]: any} - arg
    * @return this stage
    */
-  matchSmart: (arg: Match, options: Options) => AggregationBuilder;
+  matchSmart: (arg: Match, options?: Options) => AggregationBuilder;
   /**
    * @method match Stage
    * Filters the documents to pass only the documents that match the specified condition(s)
    * @type {[propName: string]: any} - arg
    * @return this stage
    *    */
-  match: (arg: Match, options: Options) => AggregationBuilder;
+  match: (arg: Match, options?: Options) => AggregationBuilder;
   /**
    * @method addFields Stage
    * Adds new fields to documents
    * @type {[propName: string]: string | any} - filelds ,
    * @return this stage
    */
-  addFields: (filelds: AddFields, options: Options) => AggregationBuilder;
+  addFields: (filelds: AddFields, options?: Options) => AggregationBuilder;
   /**
    * @method project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
    * @type {[propName: string]: number | string | any} - projection
    * @return this stage
    */
-  project: (projection: Project, options: Options) => AggregationBuilder;
+  project: (projection: Project, options?: Options) => AggregationBuilder;
   /**
    * @method limit Stage
    * Limits the number of documents passed to the next stage in the pipeline.
    * @type {Number} - Limit
    * @return this stage
    */
-  limit: (limit: Number, options: Options) => AggregationBuilder;
+  limit: (limit: Number, options?: Options) => AggregationBuilder;
   /**
    * @method skip Stage
    *Skips over the specified number of documents that pass into the stage and passes the remaining documents to the next stage in the pipeline.
    * @type {Number} - skip
    * @return this stage
    */
-  skip: (skip: Number, options: Options) => AggregationBuilder;
+  skip: (skip: Number, options?: Options) => AggregationBuilder;
   /**
    * @method set Stage
    * replaces the value of a field with the specified value.
    *  @type {[propName: string]: string | any} - field
    * @return this stage
    */
-  set: (field: Set, options: Options) => AggregationBuilder;
+  set: (field: Set, options?: Options) => AggregationBuilder;
   /**
    * @method group Stage
    * Groups input documents by the specified _id expression and for each distinct grouping, outputs a document.The _id field of each output document contains the unique group by value.
@@ -286,29 +297,30 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - Group.propName
    * @return this stage
    */
-  group: (arg: Group, options: Options) => AggregationBuilder;
+  group: (arg: Group, options?: Options) => AggregationBuilder;
   /**
    * @method sort Stage
    * Sorts all input documents and returns them to the pipeline in sorted order.
-   *  @type {Number} - sortOrder
+   *  @type {Sort} - sortOrder
    * [1-->Sort ascending; -1-->Sort descending].
+   * @see Sort
    * @return this stage
    */
-  sort: (sortOrder: Number, options: Options) => AggregationBuilder;
+  sort: (sortOrder: Sort, options?: Options) => AggregationBuilder;
   /**
    * @method facet Stage
    * Processes multiple aggregation pipelines within a single stage on the same set of input documents.
    * @type {[propName: string]: any[]} - arg
    * @return this stage
    */
-  facet: (arg: Facet, options: Options) => AggregationBuilder;
+  facet: (arg: Facet, options?: Options) => AggregationBuilder;
   /**
    * @method replaceRoot Stage
    * Replaces the input document with the specified document.
    *  @type {Any} - newRoot
    * @return this stage
    */
-  replaceRoot: (newRoot: any, options: Options) => AggregationBuilder;
+  replaceRoot: (newRoot: any, options?: Options) => AggregationBuilder;
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
@@ -381,7 +393,7 @@ export default class AggregationBuilder {
    * @return this operator
    */
   dateToString: (
-    date: String,
+    date: String | any,
     format?: any,
     timezone?: String | undefined
   ) => Res;
@@ -393,15 +405,7 @@ export default class AggregationBuilder {
    * @return this operator
    *
    */
-  convert: (
-    input: any,
-    to: String
-  ) => {
-    $convert: {
-      input: any;
-      to: String;
-    };
-  };
+  convert: (input: any, to: String) => Convert;
   /**
    * Converts a value to an ObjectId().
    *an ObjectId for the hexadecimal string of length 24.
@@ -508,7 +512,7 @@ export default class AggregationBuilder {
   alone: (key: any) => boolean;
   only: (key: String) => boolean;
   isIf: Boolean;
-  if: (condition: any, options: Options) => AggregationBuilder;
+  if: (condition: any, options?: Options) => AggregationBuilder;
   /**
    * @method addToSet Operator
    * Returns an array of all unique values that results from applying an expression to each document in a group of documents that share the same group by key
