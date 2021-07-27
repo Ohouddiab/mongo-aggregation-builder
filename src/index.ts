@@ -1105,10 +1105,28 @@ export default class AggregationBuilder {
    * @method  push Operator
    * The $push operator appends a specified value to an array.
    * If the field is not an array, the operation will fail.
-   * @type {arg: string|number[]} - arg
+   * @type { string|number[]} - arg
    * @returns this operator
    */
   push = function (arg: string | number[]) {
     return { $push: arg };
+  };
+  /**
+   * @method  expr Operator
+   * Allows the use of aggregation expressions within the query language.
+   * @type { any} - arg
+   * @returns this operator
+   */
+  expr = function (arg: any) {
+    return { $expr: arg };
+  };
+  /**
+   * @method  strLenCP Operator
+   * Returns the number of UTF-8 code points in the specified string.
+   * @type {String} - str
+   * @returns this operator
+   */
+  strLenCP = function (str: string) {
+    return { $strLenCP: str };
   };
 }
