@@ -14,13 +14,14 @@ interface AggregationOptions {
     serializeFunctions: Boolean;
 }
 interface Options {
-    and?: Boolean;
-    or?: Boolean;
-    smart?: Boolean;
-    only?: String;
-    alone?: String;
-    preserveNullAndEmptyArrays?: Boolean;
-    unwind?: Boolean;
+    and?: boolean;
+    or?: boolean;
+    smart?: boolean;
+    only?: string;
+    alone?: string;
+    preserveNullAndEmptyArrays?: boolean;
+    unwind?: boolean;
+    checkLookup?: string[];
 }
 interface Lookup {
     /**
@@ -297,7 +298,7 @@ export default class AggregationBuilder {
      * @type {[propName: string]: any} - Group.propName
      * @return this stage
      */
-    group: (arg: Group, options?: Options) => AggregationBuilder;
+    group: (id: any, arg: Group, options?: Options) => AggregationBuilder;
     /**
      * @method sort Stage
      * Sorts all input documents and returns them to the pipeline in sorted order.
