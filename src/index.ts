@@ -238,7 +238,7 @@ export default class AggregationBuilder {
     this.opts.allowDiskUse = options.allowDiskUse || true;
     this.opts.serializeFunctions = options.serializeFunctions || true;
   };
-  constructor(model: any) {
+  constructor(model?: any) {
     this.model = model;
     this.aggs = this.aggs || [];
   }
@@ -264,6 +264,7 @@ export default class AggregationBuilder {
     this.isIf = true;
     if (options && options.alone && this.alone(`${options.alone}_lookup`)) return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
+    if (this.isIf) return this;
     let stage: any;
     if (arg && arg.pipeline) {
       /**
@@ -503,6 +504,7 @@ export default class AggregationBuilder {
     this.isIf = true;
     if (options && options.alone && this.alone(`${options.alone}_group`)) return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
+    if (this.isIf) return this;
     let stage: any;
     /**
      * @see Group
@@ -763,7 +765,7 @@ export default class AggregationBuilder {
    * @type {Number|null} - d
    * @returns console.dir(this.aggs,{depth:depth|null})
    */
-  show = function (d: Number) {
+  show = function (d?: Number) {
     let depth = d ? d : null;
     console.dir(this.aggs, { depth: depth || null });
     return this;
@@ -1092,10 +1094,28 @@ export default class AggregationBuilder {
    * @method  push Operator
    * The $push operator appends a specified value to an array.
    * If the field is not an array, the operation will fail.
-   * @type {arg: string|number[]} - arg
+   * @type { string|number[]} - arg
    * @returns this operator
    */
   push = function (arg: string | number[]) {
     return { $push: arg };
+  };
+  /**
+   * @method  expr Operator
+   * Allows the use of aggregation expressions within the query language.
+   * @type { any} - arg
+   * @returns this operator
+   */
+  expr = function (arg: any) {
+    return { $expr: arg };
+  };
+  /**
+   * @method  strLenCP Operator
+   * Returns the number of UTF-8 code points in the specified string.
+   * @type {String} - str
+   * @returns this operator
+   */
+  strLenCP = function (str: string) {
+    return { $strLenCP: str };
   };
 }

@@ -215,7 +215,7 @@ export default class AggregationBuilder {
     model: any;
     aggs: any[];
     option: (options: AggregationOptions) => void;
-    constructor(model: any);
+    constructor(model?: any);
     /**
      * @method lookup Stage
      * Performs a left outer join to an unsharded collection in the same database to filter in documents from the "joined" collection for processing.
@@ -476,7 +476,7 @@ export default class AggregationBuilder {
      * @type {Number|null} - d
      * @returns console.dir(this.aggs,{depth:depth|null})
      */
-    show: (d: Number) => any;
+    show: (d?: Number | undefined) => any;
     alones: any;
     alone: (key: any) => boolean;
     only: (key: String) => boolean;
@@ -739,11 +739,29 @@ export default class AggregationBuilder {
      * @method  push Operator
      * The $push operator appends a specified value to an array.
      * If the field is not an array, the operation will fail.
-     * @type {arg: string|number[]} - arg
+     * @type { string|number[]} - arg
      * @returns this operator
      */
     push: (arg: string | number[]) => {
         $push: string | number[];
+    };
+    /**
+     * @method  expr Operator
+     * Allows the use of aggregation expressions within the query language.
+     * @type { any} - arg
+     * @returns this operator
+     */
+    expr: (arg: any) => {
+        $expr: any;
+    };
+    /**
+     * @method  strLenCP Operator
+     * Returns the number of UTF-8 code points in the specified string.
+     * @type {String} - str
+     * @returns this operator
+     */
+    strLenCP: (str: string) => {
+        $strLenCP: string;
     };
 }
 export {};
