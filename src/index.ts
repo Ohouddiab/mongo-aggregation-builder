@@ -15,13 +15,14 @@ interface AggregationOptions {
 }
 
 interface Options {
-  and?: Boolean;
-  or?: Boolean;
-  smart?: Boolean;
-  only?: String;
-  alone?: String;
-  preserveNullAndEmptyArrays?: Boolean;
-  unwind?: Boolean;
+  and?: boolean;
+  or?: boolean;
+  smart?: boolean;
+  only?: string;
+  alone?: string;
+  preserveNullAndEmptyArrays?: boolean;
+  unwind?: boolean;
+  checkLookup?: string[];
 }
 interface Lookup {
   /**
@@ -255,12 +256,13 @@ export default class AggregationBuilder {
    * @type {String} Lookup.as - Optional. output array field
    * @return this stage
    */
-  lookup: (arg: Lookup, options?: Options) => AggregationBuilder = function (
-    arg,
-    options
-  ) {
-    if (options && options.alone && this.alone(`${options.alone}_lookup`))
+  lookup: (arg: Lookup, options?: Options) => AggregationBuilder = function (arg, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.alone && this.alone(`${options.alone}_lookup`)) return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
     let stage: any;
     if (arg && arg.pipeline) {
@@ -268,10 +270,8 @@ export default class AggregationBuilder {
        * @see pipelineLookup
        */
       stage = { $lookup: {} };
-      if (!arg.pipeline)
-        throw "key 'pipeline'  is required to build lookup aggregation stage";
-      if (!arg.from)
-        throw "key 'from'  is required to build lookup aggregation stage";
+      if (!arg.pipeline) throw "key 'pipeline'  is required to build lookup aggregation stage";
+      if (!arg.from) throw "key 'from'  is required to build lookup aggregation stage";
       stage.$lookup.from = arg.from;
       stage.$lookup.let = arg.let;
       stage.$lookup.pipeline = arg.pipeline || [];
@@ -282,10 +282,8 @@ export default class AggregationBuilder {
        * @see Lookup
        */
       stage = { $lookup: {} };
-      if (arg && !arg.from)
-        throw "key 'from'  is required to build lookup aggregation stage";
-      if (arg && !arg.localField)
-        throw "key 'localField'  is required to build lookup aggregation stage";
+      if (arg && !arg.from) throw "key 'from'  is required to build lookup aggregation stage";
+      if (arg && !arg.localField) throw "key 'localField'  is required to build lookup aggregation stage";
       stage.$lookup.from = arg.from;
       stage.$lookup.localField = arg.localField;
       stage.$lookup.foreignField = arg.foreignField || "_id";
@@ -299,11 +297,9 @@ export default class AggregationBuilder {
       this.aggs.push({
         $unwind: {
           path: `$${stage.$lookup.as}`,
-          preserveNullAndEmptyArrays:
-            options.preserveNullAndEmptyArrays == false ? false : true,
+          preserveNullAndEmptyArrays: options.preserveNullAndEmptyArrays == false ? false : true,
         },
       });
-    // this.isIf = false
     return this;
   };
   /**
@@ -316,18 +312,18 @@ export default class AggregationBuilder {
   If false, if path is null, missing, or an empty array, $unwind does not output a document. The default value is false.;
    * @return this stage
    */
-  unwind: (arg: Unwind, options?: Options) => AggregationBuilder = function (
-    arg,
-    options
-  ) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_unwind`))
+  unwind: (arg: Unwind, options?: Options) => AggregationBuilder = function (arg, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_unwind`)) return this;
     /**
      * @see Unwind
      */
     this.aggs.push({ $unwind: arg });
-    this.isIf = false;
     return this;
   };
   /**
@@ -336,11 +332,13 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - arg
    * @return this stage
    */
-  matchSmart: (arg: Match, options?: Options) => AggregationBuilder = function (
-    arg,
-    options
-  ) {
+  matchSmart: (arg: Match, options?: Options) => AggregationBuilder = function (arg, options) {
     let stage;
+    if (!this.isIf) {
+      this.isIf = true;
+      return this;
+    }
+    this.isIf = true;
     /**
      * @see Match
      */
@@ -359,7 +357,6 @@ export default class AggregationBuilder {
       stage.$match.$and.push(arg);
     }
     this.aggs.push(stage);
-    this.isIf = false;
     return this;
   };
   /**
@@ -368,16 +365,15 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - arg
    * @return this stage
    *    */
-  match: (arg: Match, options?: Options) => AggregationBuilder = function (
-    arg,
-    options
-  ) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_match`))
+  match: (arg: Match, options?: Options) => AggregationBuilder = function (arg, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
-    if (this.isIf) return this;
-    if (options && (options.smart || options.or || options.and))
-      return this.matchSmart(arg, options);
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_match`)) return this;
+    if (options && (options.smart || options.or || options.and)) return this.matchSmart(arg, options);
     let stage;
     /**
      * @see Match
@@ -391,7 +387,6 @@ export default class AggregationBuilder {
     }
     Object.assign(stage.$match, arg);
     this.aggs.push(stage);
-    this.isIf = false;
     return this;
   };
   /**
@@ -400,19 +395,19 @@ export default class AggregationBuilder {
    * @type {[propName: string]: string | any} - filelds ,
    * @return this stage
    */
-  addFields: (
-    filelds: AddFields,
-    options?: Options
-  ) => AggregationBuilder = function (filelds, options) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_addFields`))
+  addFields: (filelds: AddFields, options?: Options) => AggregationBuilder = function (filelds, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_addFields`)) return this;
     /**
  * @see AddFields
  
  */
     this.aggs.push({ $addFields: filelds });
-    this.isIf = false;
     return this;
   };
   /**
@@ -421,18 +416,18 @@ export default class AggregationBuilder {
    * @type {[propName: string]: number | string | any} - projection
    * @return this stage
    */
-  project: (
-    projection: Project,
-    options?: Options
-  ) => AggregationBuilder = function (projection, options) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_project`))
+  project: (projection: Project, options?: Options) => AggregationBuilder = function (projection, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_project`)) return this;
     /**
      * @see Project
      */
     this.aggs.push({ $project: projection });
-    this.isIf = false;
     return this;
   };
   /**
@@ -441,15 +436,15 @@ export default class AggregationBuilder {
    * @type {Number} - Limit
    * @return this stage
    */
-  limit: (limit: Number, options?: Options) => AggregationBuilder = function (
-    limit,
-    options
-  ) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_limit`))
+  limit: (limit: Number, options?: Options) => AggregationBuilder = function (limit, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_limit`)) return this;
     this.aggs.push({ $limit: limit });
-    this.isIf = false;
     return this;
   };
   /**
@@ -458,15 +453,15 @@ export default class AggregationBuilder {
    * @type {Number} - skip
    * @return this stage
    */
-  skip: (skip: Number, options?: Options) => AggregationBuilder = function (
-    skip,
-    options
-  ) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_skip`))
+  skip: (skip: Number, options?: Options) => AggregationBuilder = function (skip, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_skip`)) return this;
     this.aggs.push({ $skip: skip });
-    this.isIf = false;
     return this;
   };
   /**
@@ -475,19 +470,19 @@ export default class AggregationBuilder {
    *  @type {[propName: string]: string | any} - field
    * @return this stage
    */
-  set: (field: Set, options?: Options) => AggregationBuilder = function (
-    field,
-    options
-  ) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_set`))
+  set: (field: Set, options?: Options) => AggregationBuilder = function (field, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_set`)) return this;
     /**
      * @see Set
      */
 
     this.aggs.push({ $set: field });
-    this.isIf = false;
     return this;
   };
   /**
@@ -498,12 +493,15 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - Group.propName
    * @return this stage
    */
-  group: (arg: Group, options?: Options) => AggregationBuilder = function (
-    arg,
-    options
-  ) {
-    if (options && options.alone && this.alone(`${options.alone}_group`))
+  group: (id: any, arg: Group, options?: Options) => AggregationBuilder = function (id, arg, options) {
+    console.log(arg);
+
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.alone && this.alone(`${options.alone}_group`)) return this;
     if (options && options.only && this.only(`${options.only}`)) return this;
     let stage: any;
     /**
@@ -511,9 +509,16 @@ export default class AggregationBuilder {
      *
      */
     stage = { $group: arg };
-    stage.$group._id = arg._id;
+    console.log(stage, stage.$group);
+    stage.$group._id = id;
+    if (options?.checkLookup?.length) {
+      options.checkLookup.forEach((key) => {
+        if (stage.$group._id[key]) {
+          stage.$group._id[key] = `${stage.$group._id[key]}._id`;
+        }
+      });
+    }
     this.aggs.push(stage);
-    this.isIf = false;
     return this;
   };
   /**
@@ -524,16 +529,15 @@ export default class AggregationBuilder {
    * @see Sort
    * @return this stage
    */
-  sort: (sortOrder: Sort, options?: Options) => AggregationBuilder = function (
-    sortOrder,
-    options
-  ) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_sort`))
+  sort: (sortOrder: Sort, options?: Options) => AggregationBuilder = function (sortOrder, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
-
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_sort`)) return this;
     this.aggs.push({ $sort: sortOrder });
-    this.isIf = false;
     return this;
   };
   /**
@@ -542,20 +546,20 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any[]} - arg
    * @return this stage
    */
-  facet: (arg: Facet, options?: Options) => AggregationBuilder = function (
-    arg,
-    options
-  ) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_facet`))
+  facet: (arg: Facet, options?: Options) => AggregationBuilder = function (arg, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_facet`)) return this;
     let stage: any;
     /**
      * @see Facet
      */
     stage = { $facet: arg };
     this.aggs.push(stage);
-    this.isIf = false;
     return this;
   };
   /**
@@ -564,15 +568,15 @@ export default class AggregationBuilder {
    *  @type {Any} - newRoot
    * @return this stage
    */
-  replaceRoot: (
-    newRoot: any,
-    options?: Options
-  ) => AggregationBuilder = function (newRoot, options) {
-    if (options && options.only && this.only(`${options.only}`)) return this;
-    if (options && options.alone && this.alone(`${options.alone}_replaceRoot `))
+  replaceRoot: (newRoot: any, options?: Options) => AggregationBuilder = function (newRoot, options) {
+    if (!this.isIf) {
+      this.isIf = true;
       return this;
+    }
+    this.isIf = true;
+    if (options && options.only && this.only(`${options.only}`)) return this;
+    if (options && options.alone && this.alone(`${options.alone}_replaceRoot `)) return this;
     this.aggs.push({ $replaceRoot: newRoot });
-    this.isIf = false;
     return this;
   };
   /**
@@ -654,11 +658,7 @@ export default class AggregationBuilder {
    *  @type {string} timezone -Optional- The timezone of the operation result
    * @return this operator
    */
-  dateToString = function (
-    date: String | any,
-    format?: any,
-    timezone?: String
-  ) {
+  dateToString = function (date: String | any, format?: any, timezone?: String) {
     let res: Res = {
       date: date,
       format: format && format != false ? format : "%Y-%m-%d",
@@ -770,7 +770,7 @@ export default class AggregationBuilder {
   };
   alones: any = {};
   alone = function (key: any) {
-    if (this.alones[key]) {
+    if (!this.alones[key]) {
       this.alones[key] = key.split("_")[0];
       return false;
     } else {
@@ -780,13 +780,11 @@ export default class AggregationBuilder {
   only = function (key: String) {
     return Object.values(this.alones).includes(key) ? false : true;
   };
-  isIf: Boolean = false;
-  if: (condition: any, options?: Options) => AggregationBuilder = function (
-    condition,
-    options
-  ) {
+  isIf: Boolean = true;
+  if: (condition: any, options?: Options) => AggregationBuilder = function (condition, options) {
     // if  = function (condition: any, options: Options) {
     if (condition) this.isIf = true;
+    else this.isIf = false;
     return this;
   };
   /**
