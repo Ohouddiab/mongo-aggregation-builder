@@ -9,7 +9,7 @@ const agg1 = agg
     agg.dateToString(agg.convert("$time", "date"), "%y-%m-%d", "Asia/Aamman")
   )
   .sort({ time: -1 })
-  .match({ latest: true, company_namespace: { $in: ["demosv"] } })
+  .match({ latest: true, company_namespace: agg.in[("demosv", "time")] })
   .addFields({ allItems: agg.concatArrays("$items", "$return_items") })
   .project({ items: 0, return_items: 0 })
   .unwind("$allItems")
