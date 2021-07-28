@@ -22,6 +22,7 @@ interface Options {
     preserveNullAndEmptyArrays?: boolean;
     unwind?: boolean;
     checkLookup?: string[];
+    applyLookup?: boolean;
 }
 interface Lookup {
     /**
@@ -115,7 +116,7 @@ interface Group {
       ...
     }
   */
-    _id: string | null | any;
+    _id?: string | null | any;
     [propName: string]: any;
 }
 interface Accumulator {
@@ -216,6 +217,8 @@ export default class AggregationBuilder {
     aggs: any[];
     option: (options: AggregationOptions) => void;
     constructor(model?: any);
+    openStage: (suffix: string, options?: Options) => boolean;
+    closeStage: (stage: any, options?: Options) => void;
     /**
      * @method lookup Stage
      * Performs a left outer join to an unsharded collection in the same database to filter in documents from the "joined" collection for processing.
@@ -300,6 +303,15 @@ export default class AggregationBuilder {
      */
     group: (id: any, arg: Group, options?: Options) => AggregationBuilder;
     /**
+     * @method amendGroup Stage
+     * *****
+     * @type {Group} - arg
+     * @type { _id: string | null | any} - Group._id;
+     * @type {[propName: string]: any} - Group.propName
+     * @return this stage
+     */
+    amendGroup: (id: any, arg: Group, lookup_arg?: Lookup, options?: Options) => AggregationBuilder;
+    /**
      * @method sort Stage
      * Sorts all input documents and returns them to the pipeline in sorted order.
      *  @type {Sort} - sortOrder
@@ -315,6 +327,10 @@ export default class AggregationBuilder {
      * @return this stage
      */
     facet: (arg: Facet, options?: Options) => AggregationBuilder;
+    isFacet: boolean;
+    currentFacetKey: string | undefined;
+    startFacet: (stage_name: string, options?: Options) => AggregationBuilder;
+    endFacet: (options?: Options) => AggregationBuilder;
     /**
      * @method replaceRoot Stage
      * Replaces the input document with the specified document.
@@ -381,7 +397,9 @@ export default class AggregationBuilder {
      *  @type {string} timezone -Optional- The timezone of the operation result
      * @return this operator
      */
-    dateToString: (date: String | any, format?: any, timezone?: String | undefined) => Res;
+    dateToString: (date: String | any, format?: any, timezone?: String | undefined) => {
+        $dateToString: Res;
+    };
     /**
      * Converts a value to a specified type.
      * @method  convert Operator
@@ -390,7 +408,9 @@ export default class AggregationBuilder {
      * @return this operator
      *
      */
-    convert: (input: any, to: String) => Convert;
+    convert: (input: any, to: String) => {
+        $convert: Convert;
+    };
     /**
      * Converts a value to an ObjectId().
      *an ObjectId for the hexadecimal string of length 24.
@@ -479,6 +499,11 @@ export default class AggregationBuilder {
     show: (d?: Number | undefined) => any;
     alones: any;
     alone: (key: any) => boolean;
+    /**
+     * @method only Operator
+     * @type {String} - key
+     * @returns console.dir(this.aggs,{depth:depth|null})
+     */
     only: (key: String) => boolean;
     isIf: Boolean;
     if: (condition: any, options?: Options) => AggregationBuilder;
