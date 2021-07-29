@@ -18,11 +18,11 @@ interface Options {
     or?: boolean;
     smart?: boolean;
     only?: string;
+    notOnly?: string;
     alone?: string;
     preserveNullAndEmptyArrays?: boolean;
     unwind?: boolean;
     checkLookup?: string[];
-    applyLookup?: boolean;
 }
 interface Lookup {
     /**
@@ -211,6 +211,10 @@ interface Sort {
      */
     [propName: string]: Number;
 }
+interface amendGroupOptions extends Options {
+    applyLookup?: boolean;
+    lookupOptions?: Options;
+}
 export default class AggregationBuilder {
     opts: AggregationOptions;
     model: any;
@@ -272,6 +276,7 @@ export default class AggregationBuilder {
      * @return this stage
      */
     project: (projection: Project, options?: Options) => AggregationBuilder;
+    amendProject: (projection: Project, options?: Options) => AggregationBuilder;
     /**
      * @method limit Stage
      * Limits the number of documents passed to the next stage in the pipeline.
@@ -310,7 +315,7 @@ export default class AggregationBuilder {
      * @type {[propName: string]: any} - Group.propName
      * @return this stage
      */
-    amendGroup: (id: any, arg: Group, lookup_arg?: Lookup, options?: Options) => AggregationBuilder;
+    amendGroup: (id: any, arg: Group, lookup_arg?: Lookup, options?: amendGroupOptions) => AggregationBuilder;
     /**
      * @method sort Stage
      * Sorts all input documents and returns them to the pipeline in sorted order.
@@ -505,6 +510,7 @@ export default class AggregationBuilder {
      * @returns console.dir(this.aggs,{depth:depth|null})
      */
     only: (key: String) => boolean;
+    notOnly: (key: String) => Boolean;
     isIf: Boolean;
     if: (condition: any, options?: Options) => AggregationBuilder;
     /**
