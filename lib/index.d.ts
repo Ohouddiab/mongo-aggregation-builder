@@ -215,6 +215,9 @@ interface amendGroupOptions extends Options {
     applyLookup?: boolean;
     lookupOptions?: Options;
 }
+interface reduceAndConcatOptions extends Options {
+    withCondition?: boolean;
+}
 export default class AggregationBuilder {
     opts: AggregationOptions;
     model: any;
@@ -342,7 +345,14 @@ export default class AggregationBuilder {
      *  @type {Any} - newRoot
      * @return this stage
      */
-    replaceRoot: (newRoot: any, options?: Options) => AggregationBuilder;
+    replaceRoot: (key: string, options?: Options) => AggregationBuilder;
+    /**
+     * @method reduceAndConcat Stage
+     * Replaces the input document with the specified document.
+     *  @type {Any} - newRoot
+     * @return this stage
+     */
+    reduceAndConcat: (input: string, initialValue: any, key?: string, condition?: any, options?: reduceAndConcatOptions) => any;
     /**
      * Concatenates strings and returns the concatenated string.
      * @method concat Operator
