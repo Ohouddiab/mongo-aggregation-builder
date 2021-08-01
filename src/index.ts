@@ -233,6 +233,10 @@ interface amendGroupOptions extends Options {
   lookupOptions?: Options;
 }
 
+interface reduceAndConcatOptions extends Options {
+  withCondition?: boolean;
+}
+
 export default class AggregationBuilder {
   opts: AggregationOptions = {
     allowDiskUse: true,
@@ -360,22 +364,14 @@ export default class AggregationBuilder {
    * @return this stage
    */
   matchSmart: (arg: Match, options?: Options) => AggregationBuilder = function (arg, options) {
+    if (!this.openStage("match", options)) return this;
     let stage;
-    if (!this.isIf) {
-      this.isIf = true;
-      return this;
-    }
-    this.isIf = true;
     /**
      * @see Match
      */
-    if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) {
-      stage = { $match: this.aggs[this.aggs.length - 1].$match };
-    } else {
-      stage = {
-        $match: {},
-      };
-    }
+    if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) stage = this.aggs.pop();
+    else stage = { $match: {} };
+
     if (options && options.or) {
       stage.$match.$or = stage.$match.$or || [];
       stage.$match.$or.push(arg);
@@ -383,6 +379,7 @@ export default class AggregationBuilder {
       stage.$match.$and = stage.$match.$and || [];
       stage.$match.$and.push(arg);
     }
+
     this.closeStage(stage);
     return this;
   };
@@ -399,13 +396,9 @@ export default class AggregationBuilder {
     /**
      * @see Match
      */
-    if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) {
-      stage = { $match: this.aggs[this.aggs.length - 1].$match };
-    } else {
-      stage = {
-        $match: {},
-      };
-    }
+    if (this.aggs.length && this.aggs[this.aggs.length - 1].$match) stage = this.aggs.pop();
+    else stage = { $match: {} };
+
     Object.assign(stage.$match, arg);
     this.closeStage(stage);
     return this;
@@ -629,12 +622,61 @@ export default class AggregationBuilder {
    *  @type {Any} - newRoot
    * @return this stage
    */
-  replaceRoot: (newRoot: any, options?: Options) => AggregationBuilder = function (newRoot, options) {
+  replaceRoot: (key: string, options?: Options) => AggregationBuilder = (key, options) => {
     if (!this.openStage("replaceRoot", options)) return this;
-    const stage = { $replaceRoot: newRoot };
+    const stage = { $replaceRoot: { newRoot: `$${key}` } };
     this.closeStage(stage);
     return this;
   };
+
+  /**
+   * @method reduceAndConcat Stage
+   * Replaces the input document with the specified document.
+   *  @type {Any} - newRoot
+   * @return this stage
+   */
+  reduceAndConcat: (input: string, initialValue: any, key?: string, condition?: any, options?: reduceAndConcatOptions) => any = (input, initialValue, key, condition, options) => {
+    if (input[0] != "$") input = `$${input}`;
+
+    const stage = {
+      $reduce: {
+        input: input,
+        initialValue: initialValue,
+        in: {},
+      },
+    };
+    if (options?.withCondition) {
+      stage.$reduce.in = {
+        $concat: [
+          "$$value",
+          {
+            $cond: [
+              {
+                $and: [{ $gt: [{ $strLenCP: "$$value" }, 1] }, condition],
+              },
+              " | ",
+              "",
+            ],
+          },
+          {
+            $cond: [condition, key ? `$$this.${key}` : "$$this", ""],
+          },
+        ],
+      };
+    } else {
+      stage.$reduce.in = {
+        $concat: [
+          "$$value",
+          {
+            $cond: [{ $gt: [{ $strLenCP: "$$value" }, 1] }, " | ", ""],
+          },
+          key ? `$$this.${key}` : "$$this",
+        ],
+      };
+    }
+    return stage;
+  };
+
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
