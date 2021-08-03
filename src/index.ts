@@ -1098,7 +1098,7 @@ export default class AggregationBuilder {
    * @type {any} - arg
    * @returns this operator
    */
-  or = function (arg: any) {
+  or = function (arg: any[]) {
     return { $or: arg };
   };
   /**
@@ -1108,13 +1108,12 @@ export default class AggregationBuilder {
    * @type {any} - arg
    * @returns this operator
    */
-  and = function (arg: any) {
+  and = function (arg: any[]) {
     return { $and: arg };
   };
   /**
    * @method  gt Operator
-   * $and performs a logical AND operation on an array of one or more expressions
-   * and selects the documents that satisfy all the expressions in the array.
+   * selects those documents where the value of the field is greater than (i.e. >) the specified value
    * @type {any} - arr1
    * @type {any} - arr2
    * @returns this operator
@@ -1128,7 +1127,7 @@ export default class AggregationBuilder {
   };
   /**
    * @method  gte Operator
-   * selects those documents where the value of the field is greater than the specified value.
+   * selects the documents where the value of the field is greater than or equal to (i.e. >=) a specified value (e.g. value.)
    * @type {any } - arr1
    * @type {any} - arr2
    * @returns this operator
