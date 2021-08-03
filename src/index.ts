@@ -262,6 +262,7 @@ export default class AggregationBuilder {
       this.isIf = true;
 
       if (options && options.alone && this.alone(`${options.alone}_${suffix}`)) return false;
+      if (options && options.notOnly && this.notOnly(`${options.notOnly}`)) return false;
       if (options && options.only && this.only(`${options.only}`)) return false;
       return true;
     } catch (e) {
