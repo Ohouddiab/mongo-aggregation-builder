@@ -354,6 +354,24 @@ export default class AggregationBuilder {
      */
     reduceAndConcat: (input: string, initialValue: any, key?: string, condition?: any, options?: reduceAndConcatOptions) => any;
     /**
+     * @method  dateFromString   Operator
+     * Converts a date/time string to a date object.
+     * @type { String | Any} - dateString : The date/time string to convert to a date object.
+     * @type {String | Any} - format : Optional. The date format specification of the dateString
+     * @type {String | Any} - timezone : 	Optional. The time zone to use to format the date.
+     * @type {String | Any} - onError : Optional. If $dateFromString encounters an error while parsing the given dateString
+     * @type {String | Any} - onNull :Optional. If the dateString provided to $dateFromString is null or missing,
+     * @returns this stage
+     */
+    dateFromString: (dateString: String | any, format?: String | any, timezone?: string | any, onNull?: string | any, options?: Options | undefined) => {
+        $dateFromString: {
+            dateString: string | any;
+            format?: string | undefined;
+            timezone?: string | undefined;
+            onNull?: string | undefined;
+        };
+    };
+    /**
      * Concatenates strings and returns the concatenated string.
      * @method concat Operator
      *  @type { String[] } - arr
@@ -813,6 +831,16 @@ export default class AggregationBuilder {
      */
     subtract: (exp1: Number | String | any, exp2: Number | String | any) => {
         $subtract: any[];
+    };
+    /**
+     * @method  divide  Operator
+     * Divides one number by another and returns the result.
+     * * @type {Number | String | Any} - exp1
+     * @type {Number | String | Any} - exp2
+     * @returns this operator
+     */
+    divide: (exp1: Number | String | any, exp2: Number | String | any) => {
+        $divide: any[];
     };
 }
 export {};
