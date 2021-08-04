@@ -719,7 +719,7 @@ export default class AggregationBuilder {
   eq = function (arg1: any, arg2: any) {
     let arr;
 
-    if (arg2) {
+    if (arg2 !== undefined) {
       arr = [arg1, arg2];
     } else if (!Array.isArray(arg1)) {
       arr = [arg1];
@@ -740,7 +740,7 @@ export default class AggregationBuilder {
   ne = function (arg1: any, arg2: any) {
     let arr;
 
-    if (arg2) {
+    if (arg2 !== undefined) {
       arr = [arg1, arg2];
     } else if (!Array.isArray(arg1)) {
       arr = [arg1];
@@ -1121,7 +1121,7 @@ export default class AggregationBuilder {
    */
   gt = function (arg1: any, arg2: any) {
     let arr;
-    if (arg2) arr = [arg1, arg2];
+    if (arg2 !== undefined) arr = [arg1, arg2];
     else if (!Array.isArray(arg1)) arr = [arg1];
     else arr = arg1;
     return { $gt: arr };
@@ -1135,7 +1135,7 @@ export default class AggregationBuilder {
    */
   gte = function (arg1: any, arg2: any) {
     let arr;
-    if (arg2) arr = [arg1, arg2];
+    if (arg2 !== undefined) arr = [arg1, arg2];
     else if (!Array.isArray(arg1)) arr = [arg1];
     else arr = arg1;
     return { $gte: arr };
@@ -1152,7 +1152,7 @@ export default class AggregationBuilder {
   lt = function (arg1: any, arg2: any) {
     let arr;
 
-    if (arg2) {
+    if (arg2 !== undefined) {
       arr = [arg1, arg2];
     } else if (!Array.isArray(arg1)) {
       arr = [arg1];
@@ -1173,7 +1173,7 @@ export default class AggregationBuilder {
   lte = function (arg1: any, arg2: any) {
     let arr;
 
-    if (arg2) {
+    if (arg2 !== undefined) {
       arr = [arg1, arg2];
     } else if (!Array.isArray(arg1)) {
       arr = [arg1];
