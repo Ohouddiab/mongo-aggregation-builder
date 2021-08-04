@@ -1210,4 +1210,15 @@ export default class AggregationBuilder {
   strLenCP = function (str: string) {
     return { $strLenCP: str };
   };
+  /**
+   * @method  subtract  Operator
+   * Subtracts two numbers to return the difference
+   * @type {Number | String | Any} - exp1
+   * @type {Number | String | Any} - exp2
+
+   * @returns this operator
+   */
+  subtract = function (exp1: Number | String | any, exp2: Number | String | any) {
+    return { $subtract: [exp1, exp2] };
+  };
 }

@@ -803,5 +803,16 @@ export default class AggregationBuilder {
     strLenCP: (str: string) => {
         $strLenCP: string;
     };
+    /**
+     * @method  subtract  Operator
+     * Subtracts two numbers to return the difference
+     * @type {Number | String | Any} - exp1
+     * @type {Number | String | Any} - exp2
+  
+     * @returns this operator
+     */
+    subtract: (exp1: Number | String | any, exp2: Number | String | any) => {
+        $subtract: any[];
+    };
 }
 export {};
