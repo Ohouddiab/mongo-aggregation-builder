@@ -677,7 +677,35 @@ export default class AggregationBuilder {
     }
     return stage;
   };
-
+  /**
+   * @method  dateFromString   Operator
+   * Converts a date/time string to a date object.
+   * @type { String | Any} - dateString : The date/time string to convert to a date object.
+   * @type {String | Any} - format : Optional. The date format specification of the dateString
+   * @type {String | Any} - timezone : 	Optional. The time zone to use to format the date.
+   * @type {String | Any} - onError : Optional. If $dateFromString encounters an error while parsing the given dateString
+   * @type {String | Any} - onNull :Optional. If the dateString provided to $dateFromString is null or missing,
+   * @returns this stage
+   */
+  dateFromString = function (dateString: String | any, format?: String | any, timezone?: string | any, onNull?: string | any, options?: Options) {
+    try {
+      const stage: {
+        $dateFromString: {
+          dateString: string | any;
+          format?: string;
+          timezone?: string;
+          onNull?: string;
+        };
+      } = { $dateFromString: { dateString: dateString } };
+      if (format) stage.$dateFromString.format = format;
+      if (timezone) stage.$dateFromString.timezone = timezone;
+      if (onNull) stage.$dateFromString.onNull = onNull;
+      return stage;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
@@ -1220,5 +1248,15 @@ export default class AggregationBuilder {
    */
   subtract = function (exp1: Number | String | any, exp2: Number | String | any) {
     return { $subtract: [exp1, exp2] };
+  };
+  /**
+   * @method  divide  Operator
+   * Divides one number by another and returns the result.
+   * * @type {Number | String | Any} - exp1
+   * @type {Number | String | Any} - exp2
+   * @returns this operator
+   */
+  divide = function (exp1: Number | String | any, exp2: Number | String | any) {
+    return { $divide: [exp1, exp2] };
   };
 }
