@@ -719,7 +719,7 @@ export default class AggregationBuilder {
   eq = function (arg1: any, arg2: any) {
     let arr;
 
-    if (arg2) {
+    if (arg2 !== undefined) {
       arr = [arg1, arg2];
     } else if (!Array.isArray(arg1)) {
       arr = [arg1];
@@ -740,7 +740,7 @@ export default class AggregationBuilder {
   ne = function (arg1: any, arg2: any) {
     let arr;
 
-    if (arg2) {
+    if (arg2 !== undefined) {
       arr = [arg1, arg2];
     } else if (!Array.isArray(arg1)) {
       arr = [arg1];
@@ -1099,7 +1099,7 @@ export default class AggregationBuilder {
    * @type {any} - arg
    * @returns this operator
    */
-  or = function (arg: any) {
+  or = function (arg: any[]) {
     return { $or: arg };
   };
   /**
@@ -1109,34 +1109,33 @@ export default class AggregationBuilder {
    * @type {any} - arg
    * @returns this operator
    */
-  and = function (arg: any) {
+  and = function (arg: any[]) {
     return { $and: arg };
   };
   /**
    * @method  gt Operator
-   * $and performs a logical AND operation on an array of one or more expressions
-   * and selects the documents that satisfy all the expressions in the array.
+   * selects those documents where the value of the field is greater than (i.e. >) the specified value
    * @type {any} - arr1
    * @type {any} - arr2
    * @returns this operator
    */
   gt = function (arg1: any, arg2: any) {
     let arr;
-    if (arg2) arr = [arg1, arg2];
+    if (arg2 !== undefined) arr = [arg1, arg2];
     else if (!Array.isArray(arg1)) arr = [arg1];
     else arr = arg1;
     return { $gt: arr };
   };
   /**
    * @method  gte Operator
-   * selects those documents where the value of the field is greater than the specified value.
+   * selects the documents where the value of the field is greater than or equal to (i.e. >=) a specified value (e.g. value.)
    * @type {any } - arr1
    * @type {any} - arr2
    * @returns this operator
    */
   gte = function (arg1: any, arg2: any) {
     let arr;
-    if (arg2) arr = [arg1, arg2];
+    if (arg2 !== undefined) arr = [arg1, arg2];
     else if (!Array.isArray(arg1)) arr = [arg1];
     else arr = arg1;
     return { $gte: arr };
@@ -1153,7 +1152,7 @@ export default class AggregationBuilder {
   lt = function (arg1: any, arg2: any) {
     let arr;
 
-    if (arg2) {
+    if (arg2 !== undefined) {
       arr = [arg1, arg2];
     } else if (!Array.isArray(arg1)) {
       arr = [arg1];
@@ -1174,7 +1173,7 @@ export default class AggregationBuilder {
   lte = function (arg1: any, arg2: any) {
     let arr;
 
-    if (arg2) {
+    if (arg2 !== undefined) {
       arr = [arg1, arg2];
     } else if (!Array.isArray(arg1)) {
       arr = [arg1];
@@ -1210,5 +1209,16 @@ export default class AggregationBuilder {
    */
   strLenCP = function (str: string) {
     return { $strLenCP: str };
+  };
+  /**
+   * @method  subtract  Operator
+   * Subtracts two numbers to return the difference
+   * @type {Number | String | Any} - exp1
+   * @type {Number | String | Any} - exp2
+
+   * @returns this operator
+   */
+  subtract = function (exp1: Number | String | any, exp2: Number | String | any) {
+    return { $subtract: [exp1, exp2] };
   };
 }
