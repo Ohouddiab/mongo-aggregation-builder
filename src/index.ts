@@ -1446,4 +1446,48 @@ export default class AggregationBuilder {
       throw e;
     }
   };
+  /**
+   * @method  map  Operator
+   * Applies an expression to each item in an array and returns an array with the applied results.
+   * * @type { String } - inputAn expression that resolves to an array.
+   * @type { String } - as - Optional. A name for the variable that represents each individual element of the input array.
+   * @type {any} -expr  -An expression that is applied to each element of the input array.
+   * @returns this operator
+   */
+  map = function (input: string, as?: string, expr?: any) {
+    try {
+      const stage: {
+        $map: {
+          input: string;
+          as?: string;
+          in: any;
+        };
+      } = { $map: { input: input, in: expr } };
+      if (as) stage.$map.as = as;
+      return stage;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+
+  /**
+   * @method  substr  Operator
+   * Returns a substring of a string,
+   * starting at a specified index position and including the specified number of characters.
+   * The index is zero-based.
+   * @type { String } - str
+   * @type { Number } - start - If <start> is a negative number, $substr returns an empty string "".
+   * @type { Number } - length  -If <length> is a negative number, $substr returns a substring that
+   *  starts at the specified index and includes the rest of the string.
+   * @returns this operator
+   */
+  substr = function (str: string, start: number, length: number): any {
+    try {
+      return { $substr: [str, start, length] };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
 }
