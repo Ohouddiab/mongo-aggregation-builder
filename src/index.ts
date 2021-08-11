@@ -1420,4 +1420,30 @@ export default class AggregationBuilder {
   isNumber = function (arg: string | number) {
     return { $isNumber: arg };
   };
+  /**
+   * @method switch Stage
+   * Evaluates a series of case expressions. When it finds an expression which evaluates to true,
+   *  $switch executes a specified expression and breaks out of the control flow.
+   * @type {[propName: string]: any[]} - branches
+   * @type {string|any} - arg
+   * @return this operator
+   */
+  switch = function (
+    branches: { [propName: string]: any },
+    arg?: string | any
+  ) {
+    try {
+      const stage: {
+        $switch: {
+          branches: { [propName: string]: any };
+          default?: string;
+        };
+      } = { $switch: { branches: branches } };
+      if (arg) stage.$switch.default = arg;
+      return stage;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
 }
