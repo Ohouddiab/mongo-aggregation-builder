@@ -378,8 +378,8 @@ export default class AggregationBuilder {
      *  can be any valid expression as long as they resolve to strings.
      * @return This operator
      */
-    concat: (arr: []) => {
-        $concat: [];
+    concat: (arr: String[]) => {
+        $concat: String[];
     };
     /**
      * Evaluates a boolean expression to return one of the two specified return expressions.
@@ -530,12 +530,17 @@ export default class AggregationBuilder {
      * @returns console.dir(this.aggs,{depth:depth|null})
      */
     show: (d?: Number | undefined) => any;
+    /**
+     * @method alone Operator
+     * @type {String} - key
+     * @returns Boolean
+     */
     alones: any;
-    alone: (key: any) => boolean;
+    alone: (key: string) => boolean;
     /**
      * @method only Operator
      * @type {String} - key
-     * @returns console.dir(this.aggs,{depth:depth|null})
+     * @returns Boolean
      */
     only: (key: String) => boolean;
     notOnly: (key: String) => Boolean;

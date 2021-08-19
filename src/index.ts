@@ -252,7 +252,7 @@ export default class AggregationBuilder {
     this.model = model;
     this.aggs = this.aggs || [];
   }
-  //console.log("this model", this.model);
+
   openStage: (suffix: string, options?: Options) => boolean = (suffix, options) => {
     try {
       if (!this.isIf) {
@@ -752,7 +752,7 @@ export default class AggregationBuilder {
    *  can be any valid expression as long as they resolve to strings.
    * @return This operator
    */
-  concat = function (arr: []) {
+  concat = function (arr: String[]) {
     return { $concat: arr };
   };
   /**
@@ -934,8 +934,13 @@ export default class AggregationBuilder {
     console.dir(this.aggs, { depth: depth || null });
     return this;
   };
+  /**
+   * @method alone Operator
+   * @type {String} - key
+   * @returns Boolean
+   */
   alones: any = {};
-  alone = function (key: any) {
+  alone = function (key: string) {
     if (!this.alones[key]) {
       this.alones[key] = key.split("_")[0];
       return false;
@@ -946,7 +951,7 @@ export default class AggregationBuilder {
   /**
    * @method only Operator
    * @type {String} - key
-   * @returns console.dir(this.aggs,{depth:depth|null})
+   * @returns Boolean
    */
   only = function (key: String) {
     return Object.values(this.alones).includes(key) ? false : true;
@@ -965,6 +970,7 @@ export default class AggregationBuilder {
     else this.isIf = false;
     return this;
   };
+
   /**
    * @method addToSet Operator
    * Returns an array of all unique values that results from applying an expression to each document in a group of documents that share the same group by key
@@ -993,7 +999,6 @@ export default class AggregationBuilder {
   first = function (key: string) {
     return { $first: key };
   };
-
   /**
    * @method last Operator
    * Returns the last element in an array.
@@ -1382,7 +1387,6 @@ export default class AggregationBuilder {
       throw e;
     }
   };
-
   /**
    * @method  substr  Operator
    * Returns a substring of a string,
