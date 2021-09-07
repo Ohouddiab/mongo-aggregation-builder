@@ -1497,7 +1497,7 @@ export default class AggregationBuilder {
   //   /**
   //  * @method  isArray  Operator
   //  * Determines if the operand is an array. Returns a boolean.
-  //  * @type { any } - arg -can be any valid expression. 
+  //  * @type { any } - arg -can be any valid expression.
   //  * @returns this operator
   //  */
   //    isArray = function (arg: any): any {
