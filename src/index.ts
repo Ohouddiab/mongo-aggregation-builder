@@ -1114,7 +1114,7 @@ export default class AggregationBuilder {
    * @type {string|1| any[]} - data
    * @returns this operator
    */
-  sum = function (data: string | 1 | any[]) {
+  sum = function (data: string | 1 | any) {
     return { $sum: data };
   };
   /**
@@ -1494,4 +1494,18 @@ export default class AggregationBuilder {
       throw e;
     }
   };
+  //   /**
+  //  * @method  isArray  Operator
+  //  * Determines if the operand is an array. Returns a boolean.
+  //  * @type { any } - arg -can be any valid expression. 
+  //  * @returns this operator
+  //  */
+  //    isArray = function (arg: any): any {
+  //     try {
+  //       return { $isArray: arg };
+  //     } catch (e) {
+  //       console.error(e);
+  //       throw e;
+  //     }
+  //   };
 }
