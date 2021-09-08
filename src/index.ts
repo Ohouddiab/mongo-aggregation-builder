@@ -206,9 +206,9 @@ interface Reduce {
 
 interface Filter {
   /**
-   * @type {any} input - An expression that resolves to an array.
+   * @type {string|any[]} input - An expression that resolves to an array.
    */
-  input: any;
+  input: string|any[];
   /**
    * @type {string} as - Optional. A name for the variable that represents each individual element of the input array
    */
@@ -1111,10 +1111,10 @@ export default class AggregationBuilder {
   /**
    * @method sum Operator
    * Calculates and returns the sum of numeric values. $sum ignores non-numeric values.
-   * @type {string|1| any[]} - data
+   * @type {string|Number| any[]} - data
    * @returns this operator
    */
-  sum = function (data: string | 1 | any) {
+  sum = function (data: string | Number | any[]) {
     return { $sum: data };
   };
   /**
@@ -1221,7 +1221,7 @@ export default class AggregationBuilder {
    * @method filter Operator
    * Selects a subset of an array to return based on the specified condition. Returns an array with only those elements that match the condition. The returned elements are in the original order.
    * @type {Filter} - arg
-   *  @type {input: any} - Filter.input
+   * @type {input: string|any[]} - Filter.input
    * @type {as?: String} - Filter.as
    * @type {cond: any } - Filter.cond
    * @returns this operator
