@@ -208,7 +208,7 @@ interface Filter {
   /**
    * @type {string|any[]} input - An expression that resolves to an array.
    */
-  input: string|any[];
+  input: string | any[];
   /**
    * @type {string} as - Optional. A name for the variable that represents each individual element of the input array
    */
@@ -823,11 +823,11 @@ export default class AggregationBuilder {
   /**
    * Concatenates strings and returns the concatenated string.
    * @method concat Operator
-   *  @type { String[] } - arr
+   *  @type { any[] } - arr
    *  can be any valid expression as long as they resolve to strings.
    * @return This operator
    */
-  concat = function (arr: String[]) {
+  concat = function (arr: any[]) {
     return { $concat: arr };
   };
   /**
