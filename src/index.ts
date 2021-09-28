@@ -1139,10 +1139,10 @@ export default class AggregationBuilder {
   /**
    * @method size Operator
    * Counts and returns the total number of items in an array.
-   * @type {string} - key
+   * @type {any} - key
    * @returns this operator
    */
-  size = function (key: string) {
+  size = function (key: any) {
     return { $size: key };
   };
   /**
