@@ -1142,7 +1142,7 @@ export default class AggregationBuilder {
    * @type {string} - key
    * @returns this operator
    */
-  size = function (key: string) {
+  size = function (key: any) {
     return { $size: key };
   };
   /**
