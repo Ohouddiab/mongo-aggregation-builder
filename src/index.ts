@@ -683,12 +683,17 @@ export default class AggregationBuilder {
    *  @type {Any} - newRoot
    * @return this stage
    */
-  replaceRoot: (key: string, options?: Options) => AggregationBuilder = (
+  replaceRoot: (key: string | any, options?: Options) => AggregationBuilder = (
     key,
     options
   ) => {
     if (!this.openStage("replaceRoot", options)) return this;
-    const stage = { $replaceRoot: { newRoot: `$${key}` } };
+    let stage
+    if(typeof key == "string")
+     stage = { $replaceRoot: { newRoot: `$${key}` } };
+    else
+      stage = { $replaceRoot: { newRoot: key } };
+
     this.closeStage(stage);
     return this;
   };
