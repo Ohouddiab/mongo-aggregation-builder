@@ -1124,7 +1124,7 @@ export default class AggregationBuilder {
    * @type {string|number} - key2
    * @returns this operator
    */
-  multiply = function (key1: string | number, key2: string | number) {
+  multiply = function (key1: string | number|any, key2: string | number|any) {
     return { $multiply: [key1, key2] };
   };
   /**
@@ -1190,7 +1190,7 @@ export default class AggregationBuilder {
    * @type {Number} - place
    * @returns this operator
    */
-  round = function (num: String | Number, place: Number) {
+  round = function (num: String | Number|any, place: Number) {
     return { $round: [num, place] };
   };
   /**

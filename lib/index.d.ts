@@ -617,8 +617,8 @@ export default class AggregationBuilder {
      * @type {string|number} - key2
      * @returns this operator
      */
-    multiply: (key1: string | number, key2: string | number) => {
-        $multiply: (string | number)[];
+    multiply: (key1: string | number | any, key2: string | number | any) => {
+        $multiply: any[];
     };
     /**
      * @method in Operator
@@ -680,8 +680,8 @@ export default class AggregationBuilder {
      * @type {Number} - place
      * @returns this operator
      */
-    round: (num: String | Number, place: Number) => {
-        $round: (String | Number)[];
+    round: (num: String | Number | any, place: Number) => {
+        $round: any[];
     };
     /**
      * @method pull Operator
