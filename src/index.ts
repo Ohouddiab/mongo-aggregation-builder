@@ -439,16 +439,18 @@ export default class AggregationBuilder {
    * @type {[propName: string]: string | any} - fields,
    * @return this stage
    */
-  addFields: (fields: AddFields, options?: Options) => AggregationBuilder =
-    function (fields, options) {
-      if (!this.openStage("addFields", options)) return this;
-      /**
-       * @see AddFields
-       */
-      const stage = { $addFields: fields };
-      this.closeStage(stage);
-      return this;
-    };
+  addFields: (
+    fields: AddFields,
+    options?: Options
+  ) => AggregationBuilder = function (fields, options) {
+    if (!this.openStage("addFields", options)) return this;
+    /**
+     * @see AddFields
+     */
+    const stage = { $addFields: fields };
+    this.closeStage(stage);
+    return this;
+  };
   /**
    * @method project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
@@ -472,27 +474,29 @@ export default class AggregationBuilder {
       throw e;
     }
   };
-  amendProject: (projection: Project, options?: Options) => AggregationBuilder =
-    (projection, options) => {
-      try {
-        if (!this.openStage("project", options)) return this;
-        let latestStage = this.aggs[this.aggs.length - 1];
-        if (!latestStage.hasOwnProperty("$project")) {
-          if (!this.isFacet) return this;
-          else {
-            const key: string = this.currentFacetKey || "";
-            latestStage =
-              latestStage.$facet[key][latestStage.$facet[key].length - 1];
-            if (!latestStage.hasOwnProperty("$project")) return this;
-          }
+  amendProject: (
+    projection: Project,
+    options?: Options
+  ) => AggregationBuilder = (projection, options) => {
+    try {
+      if (!this.openStage("project", options)) return this;
+      let latestStage = this.aggs[this.aggs.length - 1];
+      if (!latestStage.hasOwnProperty("$project")) {
+        if (!this.isFacet) return this;
+        else {
+          const key: string = this.currentFacetKey || "";
+          latestStage =
+            latestStage.$facet[key][latestStage.$facet[key].length - 1];
+          if (!latestStage.hasOwnProperty("$project")) return this;
         }
-        Object.assign(latestStage.$project, projection);
-        return this;
-      } catch (e) {
-        console.error(e);
-        throw e;
       }
-    };
+      Object.assign(latestStage.$project, projection);
+      return this;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
   /**
    * @method limit Stage
    * Limits the number of documents passed to the next stage in the pipeline.
@@ -550,26 +554,29 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - Group.propName
    * @return this stage
    */
-  group: (id: any, arg: Group, options?: Options) => AggregationBuilder =
-    function (id, arg, options) {
-      if (!this.openStage("group", options)) return this;
-      let stage: any;
-      /**
-       * @see Group
-       *
-       */
-      stage = { $group: arg };
-      stage.$group._id = id;
-      if (options?.checkLookup?.length) {
-        options.checkLookup.forEach((key) => {
-          if (stage.$group._id[key]) {
-            stage.$group._id[key] = `${stage.$group._id[key]}._id`;
-          }
-        });
-      }
-      this.closeStage(stage);
-      return this;
-    };
+  group: (
+    id: any,
+    arg: Group,
+    options?: Options
+  ) => AggregationBuilder = function (id, arg, options) {
+    if (!this.openStage("group", options)) return this;
+    let stage: any;
+    /**
+     * @see Group
+     *
+     */
+    stage = { $group: arg };
+    stage.$group._id = id;
+    if (options?.checkLookup?.length) {
+      options.checkLookup.forEach((key) => {
+        if (stage.$group._id[key]) {
+          stage.$group._id[key] = `${stage.$group._id[key]}._id`;
+        }
+      });
+    }
+    this.closeStage(stage);
+    return this;
+  };
   /**
    * @method amendGroup Stage
    * *****
@@ -587,18 +594,38 @@ export default class AggregationBuilder {
     try {
       if (!this.openStage("group", options)) return this;
 
-      const latestStage = this.aggs[this.aggs.length - 1];
-      if (!latestStage.hasOwnProperty("$group")) return this;
+      let latestStage = this.aggs[this.aggs.length - 1];
+
+      if (this.isFacet) {
+        let key: string = this.currentFacetKey || "";
+        if (
+          !latestStage.hasOwnProperty("$facet") ||
+          !Array.isArray(latestStage.$facet[key])
+        )
+          throw new Error("Start facet stage first");
+        latestStage =
+          latestStage.$facet[key][latestStage.$facet[key].length - 1];
+      }
+      if (!latestStage.hasOwnProperty("$group")) {
+        return this;
+      }
 
       if (!latestStage.$group._id) latestStage.$group._id = {};
-      else if (typeof latestStage.$group._id == "string")
+      else if (typeof latestStage.$group._id == "string") {
         throw new Error("group._id is String, please convert it to object");
+      }
 
       Object.assign(latestStage.$group._id, id);
       Object.assign(latestStage.$group, arg);
 
       if (options?.applyLookup) {
-        this.aggs.pop();
+        if (this.isFacet) {
+          let key: string = this.currentFacetKey || "";
+          const facet_stage = this.aggs[this.aggs.length - 1].$facet[key];
+          facet_stage.pop();
+        } else {
+          this.aggs.pop();
+        }
         this.lookup(lookup_arg, options?.lookupOptions);
         this.closeStage(latestStage);
       }
@@ -683,12 +710,16 @@ export default class AggregationBuilder {
    *  @type {Any} - newRoot
    * @return this stage
    */
-  replaceRoot: (key: string, options?: Options) => AggregationBuilder = (
+  replaceRoot: (key: string | any, options?: Options) => AggregationBuilder = (
     key,
     options
   ) => {
     if (!this.openStage("replaceRoot", options)) return this;
-    const stage = { $replaceRoot: { newRoot: `$${key}` } };
+    let stage;
+    if (typeof key == "string")
+      stage = { $replaceRoot: { newRoot: `$${key}` } };
+    else stage = { $replaceRoot: { newRoot: key } };
+
     this.closeStage(stage);
     return this;
   };
@@ -1124,7 +1155,7 @@ export default class AggregationBuilder {
    * @type {string|number} - key2
    * @returns this operator
    */
-  multiply = function (key1: string | number, key2: string | number) {
+  multiply = function (key1: string | number|any, key2: string | number|any) {
     return { $multiply: [key1, key2] };
   };
   /**
@@ -1190,7 +1221,7 @@ export default class AggregationBuilder {
    * @type {Number} - place
    * @returns this operator
    */
-  round = function (num: String | Number, place: Number) {
+  round = function (num: String | Number|any, place: Number) {
     return { $round: [num, place] };
   };
   /**
