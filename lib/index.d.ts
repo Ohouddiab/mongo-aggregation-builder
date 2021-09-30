@@ -345,7 +345,7 @@ export default class AggregationBuilder {
      *  @type {Any} - newRoot
      * @return this stage
      */
-    replaceRoot: (key: string, options?: Options) => AggregationBuilder;
+    replaceRoot: (key: string | any, options?: Options) => AggregationBuilder;
     /**
      * @method  dateFromString   Operator
      * Converts a date/time string to a date object.
