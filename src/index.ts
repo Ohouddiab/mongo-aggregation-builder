@@ -1155,7 +1155,10 @@ export default class AggregationBuilder {
    * @type {string|number} - key2
    * @returns this operator
    */
-  multiply = function (key1: string | number|any, key2: string | number|any) {
+  multiply = function (
+    key1: string | number | any,
+    key2: string | number | any
+  ) {
     return { $multiply: [key1, key2] };
   };
   /**
@@ -1221,7 +1224,7 @@ export default class AggregationBuilder {
    * @type {Number} - place
    * @returns this operator
    */
-  round = function (num: String | Number|any, place: Number) {
+  round = function (num: String | Number | any, place: Number) {
     return { $round: [num, place] };
   };
   /**
@@ -1390,11 +1393,11 @@ export default class AggregationBuilder {
   /**
    * @method  strLenCP Operator
    * Returns the number of UTF-8 code points in the specified string.
-   * @type {String} - str
+   * @type {Any} - expression or string
    * @returns this operator
    */
-  strLenCP = function (str: string) {
-    return { $strLenCP: str };
+  strLenCP = function (expr: any) {
+    return { $strLenCP: expr };
   };
   /**
    * @method  subtract  Operator
@@ -1464,14 +1467,11 @@ export default class AggregationBuilder {
    * @type {string|any} - arg
    * @return this operator
    */
-  switch = function (
-    branches: { [propName: string]: any },
-    arg?: string | any
-  ) {
+  switch = function (branches: any[], arg?: string | any) {
     try {
       const stage: {
         $switch: {
-          branches: { [propName: string]: any };
+          branches: any[];
           default?: string;
         };
       } = { $switch: { branches: branches } };
@@ -1520,6 +1520,63 @@ export default class AggregationBuilder {
   substr = function (str: string, start: number, length: number): any {
     try {
       return { $substr: [str, start, length] };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  arrayToObject  Operator
+   * Converts an array into a single document.
+   * The index is zero-based.
+   * @type { Any } - expr - The <expression> can be any valid expression that resolves to an array of two-element arrays or array of documents that contains "k" and "v" fields
+   * @returns this operator
+   */
+  arrayToObject = function (expr: any): any {
+    try {
+      return { $arrayToObject: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  toDouble  Operator
+   * Converts a value to a double.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toDouble = function (expr: any): any {
+    try {
+      return { $toDouble: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  toBool  Operator
+   * Converts a value to a Boolean.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toBool = function (expr: any): any {
+    try {
+      return { $toBool: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  toString  Operator
+   * Converts a value to a string.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toString = function (expr: any): any {
+    try {
+      return { $toString: expr };
     } catch (e) {
       console.error(e);
       throw e;
