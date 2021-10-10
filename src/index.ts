@@ -228,9 +228,10 @@ interface Sort {
   [propName: string]: Number;
 }
 
-interface amendGroupOptions extends Options {
+interface amendOptions extends Options {
   applyLookup?: boolean;
   lookupOptions?: Options;
+  lookup_arg?: Lookup;
 }
 
 interface reduceAndConcatOptions extends Options {
@@ -476,7 +477,7 @@ export default class AggregationBuilder {
   };
   amendProject: (
     projection: Project,
-    options?: Options
+    options?: amendOptions
   ) => AggregationBuilder = (projection, options) => {
     try {
       if (!this.openStage("project", options)) return this;
@@ -491,6 +492,20 @@ export default class AggregationBuilder {
         }
       }
       Object.assign(latestStage.$project, projection);
+
+      if (options?.applyLookup) {
+        if (this.isFacet) {
+          let key: string = this.currentFacetKey || "";
+          const facet_stage = this.aggs[this.aggs.length - 1].$facet[key];
+          facet_stage.pop();
+        } else {
+          this.aggs.pop();
+        }
+        if (options?.lookup_arg)
+          this.lookup(options.lookup_arg, options?.lookupOptions);
+        this.closeStage(latestStage);
+      }
+
       return this;
     } catch (e) {
       console.error(e);
@@ -589,7 +604,7 @@ export default class AggregationBuilder {
     id: any,
     arg: Group,
     lookup_arg?: Lookup,
-    options?: amendGroupOptions
+    options?: amendOptions
   ) => AggregationBuilder = function (id, arg, lookup_arg, options) {
     try {
       if (!this.openStage("group", options)) return this;
@@ -1269,8 +1284,13 @@ export default class AggregationBuilder {
    * @type {any[] }-arg
    * @returns this operator
    */
-  ifNull = function (key: any[]) {
-    return { $ifNull: key };
+  ifNull = function (expr: any[]) {
+    try {
+      return { $ifNull: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   };
   /**
    * @method  arrayElemAt Operator
@@ -1582,18 +1602,18 @@ export default class AggregationBuilder {
       throw e;
     }
   };
-  //   /**
-  //  * @method  isArray  Operator
-  //  * Determines if the operand is an array. Returns a boolean.
-  //  * @type { any } - arg -can be any valid expression.
-  //  * @returns this operator
-  //  */
-  //    isArray = function (arg: any): any {
-  //     try {
-  //       return { $isArray: arg };
-  //     } catch (e) {
-  //       console.error(e);
-  //       throw e;
-  //     }
-  //   };
+  /**
+   * @method  toDate  Operator
+   * Converts a value to a date.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toDate = function (expr: any): any {
+    try {
+      return { $toDate: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
 }
