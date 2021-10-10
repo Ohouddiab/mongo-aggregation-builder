@@ -211,9 +211,10 @@ interface Sort {
    */
   [propName: string]: Number;
 }
-interface amendGroupOptions extends Options {
+interface amendOptions extends Options {
   applyLookup?: boolean;
   lookupOptions?: Options;
+  lookup_arg?: Lookup;
 }
 interface reduceAndConcatOptions extends Options {
   withCondition?: boolean;
@@ -279,7 +280,10 @@ export default class AggregationBuilder {
    * @return this stage
    */
   project: (projection: Project, options?: Options) => AggregationBuilder;
-  amendProject: (projection: Project, options?: Options) => AggregationBuilder;
+  amendProject: (
+    projection: Project,
+    options?: amendOptions
+  ) => AggregationBuilder;
   /**
    * @method limit Stage
    * Limits the number of documents passed to the next stage in the pipeline.
@@ -322,7 +326,7 @@ export default class AggregationBuilder {
     id: any,
     arg: Group,
     lookup_arg?: Lookup,
-    options?: amendGroupOptions
+    options?: amendOptions
   ) => AggregationBuilder;
   /**
    * @method sort Stage
@@ -812,7 +816,7 @@ export default class AggregationBuilder {
    * @returns this operator
    */
   ifNull: (
-    key: any[]
+    expr: any[]
   ) => {
     $ifNull: any[];
   };
@@ -1088,5 +1092,12 @@ export default class AggregationBuilder {
    * @returns this operator
    */
   toString: (expr: any) => any;
+  /**
+   * @method  toDate  Operator
+   * Converts a value to a date.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toDate: (expr: any) => any;
 }
 export {};
