@@ -1533,7 +1533,7 @@ export default class AggregationBuilder {
    * The index is zero-based.
    * @type { String } - str
    * @type { Number } - start - If <start> is a negative number, $substr returns an empty string "".
-   * @type { Number } - length  -If <length> is a negative number, $substr returns a substring that
+   * @type { Number } - length - If <length> is a negative number, $substr returns a substring that
    *  starts at the specified index and includes the rest of the string.
    * @returns this operator
    */
@@ -1611,6 +1611,20 @@ export default class AggregationBuilder {
   toDate = function (expr: any): any {
     try {
       return { $toDate: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  toDate  Operator
+   * Returns a value without parsing.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  literal = function (expr: any): any {
+    try {
+      return { $literal: expr };
     } catch (e) {
       console.error(e);
       throw e;
