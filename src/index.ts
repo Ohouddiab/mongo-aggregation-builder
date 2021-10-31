@@ -870,7 +870,7 @@ export default class AggregationBuilder {
    * @return this operator
    *   all three arguments are requires
    */
-  cond = function (IF: any, THEN: any, ELSE: any) {
+  cond = function (IF: any, THEN: any, ELSE?: any) {
     return {
       $cond: {
         if: IF,
