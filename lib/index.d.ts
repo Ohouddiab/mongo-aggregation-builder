@@ -416,7 +416,7 @@ export default class AggregationBuilder {
   cond: (
     IF: any,
     THEN: any,
-    ELSE: any
+    ELSE?: any
   ) => {
     $cond: {
       if: any;
