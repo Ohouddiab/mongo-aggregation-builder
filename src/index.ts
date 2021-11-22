@@ -1616,4 +1616,18 @@ export default class AggregationBuilder {
       throw e;
     }
   };
+   /**
+   * @method  toLong  Operator
+   * Converts a value to a long.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+    toLong = function (expr: any): any {
+      try {
+        return { $toLong: expr };
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    };
 }
