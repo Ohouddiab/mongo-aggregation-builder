@@ -959,5 +959,12 @@ export default class AggregationBuilder {
      * @returns this operator
      */
     toDate: (expr: any) => any;
+    /**
+    * @method  toLong  Operator
+    * Converts a value to a long.
+    * @type { Any } - expr - The <expression> can be any valid expression Or String
+    * @returns this operator
+    */
+    toLong: (expr: any) => any;
 }
 export {};
