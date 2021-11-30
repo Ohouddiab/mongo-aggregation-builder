@@ -440,18 +440,16 @@ export default class AggregationBuilder {
    * @type {[propName: string]: string | any} - fields,
    * @return this stage
    */
-  addFields: (
-    fields: AddFields,
-    options?: Options
-  ) => AggregationBuilder = function (fields, options) {
-    if (!this.openStage("addFields", options)) return this;
-    /**
-     * @see AddFields
-     */
-    const stage = { $addFields: fields };
-    this.closeStage(stage);
-    return this;
-  };
+  addFields: (fields: AddFields, options?: Options) => AggregationBuilder =
+    function (fields, options) {
+      if (!this.openStage("addFields", options)) return this;
+      /**
+       * @see AddFields
+       */
+      const stage = { $addFields: fields };
+      this.closeStage(stage);
+      return this;
+    };
   /**
    * @method project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
@@ -569,29 +567,26 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - Group.propName
    * @return this stage
    */
-  group: (
-    id: any,
-    arg: Group,
-    options?: Options
-  ) => AggregationBuilder = function (id, arg, options) {
-    if (!this.openStage("group", options)) return this;
-    let stage: any;
-    /**
-     * @see Group
-     *
-     */
-    stage = { $group: arg };
-    stage.$group._id = id;
-    if (options?.checkLookup?.length) {
-      options.checkLookup.forEach((key) => {
-        if (stage.$group._id[key]) {
-          stage.$group._id[key] = `${stage.$group._id[key]}._id`;
-        }
-      });
-    }
-    this.closeStage(stage);
-    return this;
-  };
+  group: (id: any, arg: Group, options?: Options) => AggregationBuilder =
+    function (id, arg, options) {
+      if (!this.openStage("group", options)) return this;
+      let stage: any;
+      /**
+       * @see Group
+       *
+       */
+      stage = { $group: arg };
+      stage.$group._id = id;
+      if (options?.checkLookup?.length) {
+        options.checkLookup.forEach((key) => {
+          if (stage.$group._id[key]) {
+            stage.$group._id[key] = `${stage.$group._id[key]}._id`;
+          }
+        });
+      }
+      this.closeStage(stage);
+      return this;
+    };
   /**
    * @method amendGroup Stage
    * *****
@@ -1616,18 +1611,32 @@ export default class AggregationBuilder {
       throw e;
     }
   };
-   /**
+  /**
    * @method  toLong  Operator
    * Converts a value to a long.
    * @type { Any } - expr - The <expression> can be any valid expression Or String
    * @returns this operator
    */
-    toLong = function (expr: any): any {
-      try {
-        return { $toLong: expr };
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-    };
+  toLong = function (expr: any): any {
+    try {
+      return { $toLong: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  anyElementTrue  Operator
+   * Evaluates an array as a set and returns true if any of the elements are true and false otherwise. An empty array returns false.
+   * @type { Any[] } - expr -itself must resolve to an array
+   * @returns this operator
+   */
+  anyElementTrue = function (expr: any[]) {
+    try {
+      return { $anyElementTrue: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
 }
