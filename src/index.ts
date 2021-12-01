@@ -1557,4 +1557,18 @@ export default class AggregationBuilder {
       throw e;
     }
   };
+  /**
+   * @method  not  Operator
+   * Evaluates a boolean and returns the opposite boolean value
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+   not = function (expr: any): any {
+    try {
+      return { $not: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
 }

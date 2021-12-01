@@ -982,5 +982,12 @@ export default class AggregationBuilder {
     anyElementTrue: (expr: any[]) => {
         $anyElementTrue: any[];
     };
+    /**
+     * @method  not  Operator
+     * Evaluates a boolean and returns the opposite boolean value
+     * @type { Any } - expr - The <expression> can be any valid expression Or String
+     * @returns this operator
+     */
+    not: (expr: any) => any;
 }
 export {};
