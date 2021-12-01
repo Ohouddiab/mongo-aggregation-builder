@@ -1495,7 +1495,7 @@ export default class AggregationBuilder {
           default?: string;
         };
       } = { $switch: { branches: branches } };
-      if (arg) stage.$switch.default = arg;
+      if (arg != undefined) stage.$switch.default = arg;
       return stage;
     } catch (e) {
       console.error(e);
