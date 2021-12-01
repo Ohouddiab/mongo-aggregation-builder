@@ -1563,9 +1563,23 @@ export default class AggregationBuilder {
    * @type { Any } - expr - The <expression> can be any valid expression Or String
    * @returns this operator
    */
-   not = function (expr: any): any {
+  not = function (expr: any): any {
     try {
       return { $not: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  setIntersection  Operator
+   * Takes two or more arrays and returns an array that contains the elements that appear in every input array
+   * @type { Any[] } - expr - itself must resolve to an array
+   * @returns this operator
+   */
+  setIntersection = function (expr: any[]): any {
+    try {
+      return { $setIntersection: expr };
     } catch (e) {
       console.error(e);
       throw e;

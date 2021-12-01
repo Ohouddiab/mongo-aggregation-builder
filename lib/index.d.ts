@@ -989,5 +989,12 @@ export default class AggregationBuilder {
      * @returns this operator
      */
     not: (expr: any) => any;
+    /**
+     * @method  setIntersection  Operator
+     * Takes two or more arrays and returns an array that contains the elements that appear in every input array
+     * @type { Any[] } - expr - itself must resolve to an array
+     * @returns this operator
+     */
+    setIntersection: (expr: any[]) => any;
 }
 export {};
