@@ -399,7 +399,9 @@ export default class AggregationBuilder {
    *  can be any valid expression as long as they resolve to strings.
    * @return This operator
    */
-  concat: (arr: any[]) => {
+  concat: (
+    arr: any[]
+  ) => {
     $concat: any[];
   };
   /**
@@ -490,7 +492,9 @@ export default class AggregationBuilder {
    * @type {string} arg - string of length 24.
    * @return this Operator
    */
-  toObjectId: (arg: String) => {
+  toObjectId: (
+    arg: String
+  ) => {
     $toObjectId: String;
   };
   /**
@@ -565,7 +569,9 @@ export default class AggregationBuilder {
    * @return this Operator
    *
    */
-  isArray: (arg: any) => {
+  isArray: (
+    arg: any
+  ) => {
     $isArray: any;
   };
   /**
@@ -603,7 +609,9 @@ export default class AggregationBuilder {
    * @type {*} - key
    * @returns this operator
    */
-  addToSet: (key: any) => {
+  addToSet: (
+    key: any
+  ) => {
     $addToSet: any;
   };
   /**
@@ -612,7 +620,9 @@ export default class AggregationBuilder {
    * @type {*} - key
    * @returns this operator
    */
-  avg: (key: any) => {
+  avg: (
+    key: any
+  ) => {
     $avg: any;
   };
   /**
@@ -621,7 +631,9 @@ export default class AggregationBuilder {
    * @type {string} - key
    * @returns this operator
    */
-  first: (key: string) => {
+  first: (
+    key: string
+  ) => {
     $first: string;
   };
   /**
@@ -630,7 +642,9 @@ export default class AggregationBuilder {
    * @type {string} - key
    * @returns this operator
    */
-  last: (key: string) => {
+  last: (
+    key: string
+  ) => {
     $last: string;
   };
   /**
@@ -639,7 +653,9 @@ export default class AggregationBuilder {
    * @type {string} - key
    * @returns this operator
    */
-  max: (key: string) => {
+  max: (
+    key: string
+  ) => {
     $max: string;
   };
   /**
@@ -648,7 +664,9 @@ export default class AggregationBuilder {
    * @type {string} - key
    * @returns this operator
    */
-  min: (key: string) => {
+  min: (
+    key: string
+  ) => {
     $min: string;
   };
   /**
@@ -657,7 +675,9 @@ export default class AggregationBuilder {
    * @type {string|Number| any[]} - data
    * @returns this operator
    */
-  sum: (data: string | Number | any[]) => {
+  sum: (
+    data: string | Number | any[]
+  ) => {
     $sum: string | Number | any[];
   };
   /**
@@ -679,7 +699,9 @@ export default class AggregationBuilder {
    * @type {any[]} - key
    * @returns this operator
    */
-  in: (key: any[]) => {
+  in: (
+    key: any[]
+  ) => {
     $in: any[];
   };
   /**
@@ -688,7 +710,9 @@ export default class AggregationBuilder {
    * @type {any} - key
    * @returns this operator
    */
-  size: (key: any) => {
+  size: (
+    key: any
+  ) => {
     $size: any;
   };
   /**
@@ -697,7 +721,9 @@ export default class AggregationBuilder {
    * @type {string|any[]} - key
    * @returns this operator
    */
-  mergeObjects: (key: string | any[]) => {
+  mergeObjects: (
+    key: string | any[]
+  ) => {
     $mergeObjects: string | any[];
   };
   /**
@@ -726,7 +752,9 @@ export default class AggregationBuilder {
    * @type {lang: string} - Accumulator.lang
    * @returns this operator
    */
-  accumulator: (args: Accumulator) => {
+  accumulator: (
+    args: Accumulator
+  ) => {
     $accumulator: Accumulator;
   };
   /**
@@ -748,7 +776,9 @@ export default class AggregationBuilder {
    * @type {*} - arg
    * @returns this operator
    */
-  pull: (arg: any) => {
+  pull: (
+    arg: any
+  ) => {
     $pull: any;
   };
   /**
@@ -760,7 +790,9 @@ export default class AggregationBuilder {
    * @type {in: any} - Reduce.in
    * @returns this operator
    */
-  reduce: (arg: Reduce) => {
+  reduce: (
+    arg: Reduce
+  ) => {
     $reduce: Reduce;
   };
   /**
@@ -772,7 +804,9 @@ export default class AggregationBuilder {
    * @type {cond: any } - Filter.cond
    * @returns this operator
    */
-  filter: (arg: Filter) => {
+  filter: (
+    arg: Filter
+  ) => {
     $filter: Filter;
   };
   /**
@@ -781,7 +815,9 @@ export default class AggregationBuilder {
    * @type {any[] }-arg
    * @returns this operator
    */
-  ifNull: (expr: any[]) => {
+  ifNull: (
+    expr: any[]
+  ) => {
     $ifNull: any[];
   };
   /**
@@ -790,7 +826,9 @@ export default class AggregationBuilder {
    * @type {any[] } - arg
    * @returns this operator
    */
-  arrayElemAt: (key: any[]) => {
+  arrayElemAt: (
+    key: any[]
+  ) => {
     $arrayElemAt: any[];
   };
   /**
@@ -800,7 +838,9 @@ export default class AggregationBuilder {
    * @type {any} - arg
    * @returns this operator
    */
-  or: (arg: any[]) => {
+  or: (
+    arg: any[]
+  ) => {
     $or: any[];
   };
   /**
@@ -810,7 +850,9 @@ export default class AggregationBuilder {
    * @type {any} - arg
    * @returns this operator
    */
-  and: (arg: any[]) => {
+  and: (
+    arg: any[]
+  ) => {
     $and: any[];
   };
   /**
@@ -876,7 +918,9 @@ export default class AggregationBuilder {
    * @type { string|number[]} - arg
    * @returns this operator
    */
-  push: (arg: string | number[]) => {
+  push: (
+    arg: string | number[]
+  ) => {
     $push: string | number[];
   };
   /**
@@ -885,7 +929,9 @@ export default class AggregationBuilder {
    * @type { any} - arg
    * @returns this operator
    */
-  expr: (arg: any) => {
+  expr: (
+    arg: any
+  ) => {
     $expr: any;
   };
   /**
@@ -894,7 +940,9 @@ export default class AggregationBuilder {
    * @type {Any} - expression or string
    * @returns this operator
    */
-  strLenCP: (expr: any) => {
+  strLenCP: (
+    expr: any
+  ) => {
     $strLenCP: any;
   };
   /**
@@ -962,7 +1010,9 @@ export default class AggregationBuilder {
    * @type {string | number} - arg
    * @returns this operator
    */
-  isNumber: (arg: string | number) => {
+  isNumber: (
+    arg: string | number
+  ) => {
     $isNumber: string | number;
   };
   /**
@@ -1008,7 +1058,7 @@ export default class AggregationBuilder {
    * The index is zero-based.
    * @type { String } - str
    * @type { Number } - start - If <start> is a negative number, $substr returns an empty string "".
-   * @type { Number } - length  -If <length> is a negative number, $substr returns a substring that
+   * @type { Number } - length - If <length> is a negative number, $substr returns a substring that
    *  starts at the specified index and includes the rest of the string.
    * @returns this operator
    */
@@ -1028,6 +1078,13 @@ export default class AggregationBuilder {
    * @returns this operator
    */
   toDouble: (expr: any) => any;
+  /**
+   * @method  toInt  Operator
+   * Converts a value to an integer.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toInt: (expr: any) => any;
   /**
    * @method  toBool  Operator
    * Converts a value to a Boolean.
@@ -1050,6 +1107,13 @@ export default class AggregationBuilder {
    */
   toDate: (expr: any) => any;
   /**
+   * @method  literal  Operator
+   * Returns a value without parsing.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  literal: (expr: any) => any;
+  /**
    * @method  toLong  Operator
    * Converts a value to a long.
    * @type { Any } - expr - The <expression> can be any valid expression Or String
@@ -1062,8 +1126,24 @@ export default class AggregationBuilder {
    * @type { Any[] } - expr -itself must resolve to an array
    * @returns this operator
    */
-  anyElementTrue: (expr: any[]) => {
+  anyElementTrue: (
+    expr: any[]
+  ) => {
     $anyElementTrue: any[];
   };
+  /**
+   * @method  not  Operator
+   * Evaluates a boolean and returns the opposite boolean value
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  not: (expr: any) => any;
+  /**
+   * @method  setIntersection  Operator
+   * Takes two or more arrays and returns an array that contains the elements that appear in every input array
+   * @type { Any[] } - expr - itself must resolve to an array
+   * @returns this operator
+   */
+  setIntersection: (expr: any[]) => any;
 }
 export {};

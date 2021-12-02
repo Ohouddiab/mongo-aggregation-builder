@@ -440,16 +440,18 @@ export default class AggregationBuilder {
    * @type {[propName: string]: string | any} - fields,
    * @return this stage
    */
-  addFields: (fields: AddFields, options?: Options) => AggregationBuilder =
-    function (fields, options) {
-      if (!this.openStage("addFields", options)) return this;
-      /**
-       * @see AddFields
-       */
-      const stage = { $addFields: fields };
-      this.closeStage(stage);
-      return this;
-    };
+  addFields: (
+    fields: AddFields,
+    options?: Options
+  ) => AggregationBuilder = function (fields, options) {
+    if (!this.openStage("addFields", options)) return this;
+    /**
+     * @see AddFields
+     */
+    const stage = { $addFields: fields };
+    this.closeStage(stage);
+    return this;
+  };
   /**
    * @method project Stage
    * specified fields can be existing fields from the input documents or newly computed fields.
@@ -567,26 +569,29 @@ export default class AggregationBuilder {
    * @type {[propName: string]: any} - Group.propName
    * @return this stage
    */
-  group: (id: any, arg: Group, options?: Options) => AggregationBuilder =
-    function (id, arg, options) {
-      if (!this.openStage("group", options)) return this;
-      let stage: any;
-      /**
-       * @see Group
-       *
-       */
-      stage = { $group: arg };
-      stage.$group._id = id;
-      if (options?.checkLookup?.length) {
-        options.checkLookup.forEach((key) => {
-          if (stage.$group._id[key]) {
-            stage.$group._id[key] = `${stage.$group._id[key]}._id`;
-          }
-        });
-      }
-      this.closeStage(stage);
-      return this;
-    };
+  group: (
+    id: any,
+    arg: Group,
+    options?: Options
+  ) => AggregationBuilder = function (id, arg, options) {
+    if (!this.openStage("group", options)) return this;
+    let stage: any;
+    /**
+     * @see Group
+     *
+     */
+    stage = { $group: arg };
+    stage.$group._id = id;
+    if (options?.checkLookup?.length) {
+      options.checkLookup.forEach((key) => {
+        if (stage.$group._id[key]) {
+          stage.$group._id[key] = `${stage.$group._id[key]}._id`;
+        }
+      });
+    }
+    this.closeStage(stage);
+    return this;
+  };
   /**
    * @method amendGroup Stage
    * *****
@@ -1490,7 +1495,7 @@ export default class AggregationBuilder {
           default?: string;
         };
       } = { $switch: { branches: branches } };
-      if (arg) stage.$switch.default = arg;
+      if (arg != undefined) stage.$switch.default = arg;
       return stage;
     } catch (e) {
       console.error(e);
@@ -1528,7 +1533,7 @@ export default class AggregationBuilder {
    * The index is zero-based.
    * @type { String } - str
    * @type { Number } - start - If <start> is a negative number, $substr returns an empty string "".
-   * @type { Number } - length  -If <length> is a negative number, $substr returns a substring that
+   * @type { Number } - length - If <length> is a negative number, $substr returns a substring that
    *  starts at the specified index and includes the rest of the string.
    * @returns this operator
    */
@@ -1564,6 +1569,20 @@ export default class AggregationBuilder {
   toDouble = function (expr: any): any {
     try {
       return { $toDouble: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  toInt  Operator
+   * Converts a value to an integer.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toInt = function (expr: any): any {
+    try {
+      return { $toInt: expr };
     } catch (e) {
       console.error(e);
       throw e;
@@ -1612,6 +1631,20 @@ export default class AggregationBuilder {
     }
   };
   /**
+   * @method  literal  Operator
+   * Returns a value without parsing.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  literal = function (expr: any): any {
+    try {
+      return { $literal: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
    * @method  toLong  Operator
    * Converts a value to a long.
    * @type { Any } - expr - The <expression> can be any valid expression Or String
@@ -1634,6 +1667,34 @@ export default class AggregationBuilder {
   anyElementTrue = function (expr: any[]) {
     try {
       return { $anyElementTrue: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  not  Operator
+   * Evaluates a boolean and returns the opposite boolean value
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  not = function (expr: any): any {
+    try {
+      return { $not: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
+   * @method  setIntersection  Operator
+   * Takes two or more arrays and returns an array that contains the elements that appear in every input array
+   * @type { Any[] } - expr - itself must resolve to an array
+   * @returns this operator
+   */
+  setIntersection = function (expr: any[]): any {
+    try {
+      return { $setIntersection: expr };
     } catch (e) {
       console.error(e);
       throw e;
