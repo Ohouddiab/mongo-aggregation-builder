@@ -1575,6 +1575,20 @@ export default class AggregationBuilder {
     }
   };
   /**
+   * @method  toInt  Operator
+   * Converts a value to an integer.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toInt = function (expr: any): any {
+    try {
+      return { $toInt: expr };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  };
+  /**
    * @method  toBool  Operator
    * Converts a value to a Boolean.
    * @type { Any } - expr - The <expression> can be any valid expression Or String

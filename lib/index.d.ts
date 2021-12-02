@@ -1079,6 +1079,13 @@ export default class AggregationBuilder {
    */
   toDouble: (expr: any) => any;
   /**
+   * @method  toInt  Operator
+   * Converts a value to an integer.
+   * @type { Any } - expr - The <expression> can be any valid expression Or String
+   * @returns this operator
+   */
+  toInt: (expr: any) => any;
+  /**
    * @method  toBool  Operator
    * Converts a value to a Boolean.
    * @type { Any } - expr - The <expression> can be any valid expression Or String
