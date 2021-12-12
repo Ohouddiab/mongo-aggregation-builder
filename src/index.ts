@@ -1398,7 +1398,7 @@ export default class AggregationBuilder {
    * @type { string|number[]} - arg
    * @returns this operator
    */
-  push = function (arg: string | number[]) {
+  push = function (arg: string | number[] | any) {
     return { $push: arg };
   };
   /**

@@ -919,9 +919,9 @@ export default class AggregationBuilder {
    * @returns this operator
    */
   push: (
-    arg: string | number[]
+    arg: string | number[] | any
   ) => {
-    $push: string | number[];
+    $push: any;
   };
   /**
    * @method  expr Operator
