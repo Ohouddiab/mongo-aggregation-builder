@@ -628,13 +628,13 @@ export default class AggregationBuilder {
   /**
    * @method first Operator
    * Returns the first element in an array.
-   * @type {string} - key
+   * @type {string | any} - key
    * @returns this operator
    */
   first: (
-    key: string
+    key: string | any
   ) => {
-    $first: string;
+    $first: any;
   };
   /**
    * @method last Operator
