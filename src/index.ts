@@ -1121,10 +1121,10 @@ export default class AggregationBuilder {
   /**
    * @method first Operator
    * Returns the first element in an array.
-   * @type {string} - key
+   * @type {string | any} - key
    * @returns this operator
    */
-  first = function (key: string) {
+  first = function (key: string | any) {
     return { $first: key };
   };
   /**
@@ -1398,7 +1398,7 @@ export default class AggregationBuilder {
    * @type { string|number[]} - arg
    * @returns this operator
    */
-  push = function (arg: string | number[]) {
+  push = function (arg: string | number[] | any) {
     return { $push: arg };
   };
   /**
